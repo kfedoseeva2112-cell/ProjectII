@@ -603,7 +603,7 @@ st.markdown('<div class="sub-title">✨ ИИ-стилист с премиум-а
 
 # ------------------- ИНДИКАТОР ШАГОВ -------------------
 step = 1
-if "features" in st.session_state and st.session_state.get("auto_detected", False):
+if "features" in st.session_state and st.session_state.get("recognition_done", False):
     step = 2
 if "recommendations" in st.session_state:
     step = 3
@@ -647,11 +647,11 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Ваше фото", use_column_width=True)
 
-    # Вычисляем хеш содержимого файла, чтобы точно идентифицировать фото
+    # Вычисляем хеш содержимого файла
     file_hash = hashlib.md5(uploaded_file.getvalue()).hexdigest()
 
-    # Проверяем, были ли уже распознаны параметры для этого конкретного файла (по хешу)
-    if "features" in st.session_state and st.session_state.get("last_file_hash") == file_hash:
+    # Проверяем, было ли уже выполнено распознавание для этого фото
+    if st.session_state.get("recognition_done", False) and st.session_state.get("last_file_hash") == file_hash:
         st.success("✅ Параметры уже распознаны для этого фото (использованы сохранённые данные).")
         features = st.session_state.features
         # Показываем распознанные параметры (красиво)
@@ -666,7 +666,7 @@ if uploaded_file is not None:
             st.markdown(f"- **Цвет глаз:** {eyes_map.get(features.get('eye_color', 'неизвестно'), 'неизвестно')}")
             st.markdown(f"- **Раса:** {race_map.get(features.get('race', 'неизвестно'), 'неизвестно')}")
     else:
-        # Если параметров нет или хеш не совпадает – показываем кнопку
+        # Если распознавание ещё не выполнено для этого фото – показываем кнопку
         if st.button("🔍 Распознать параметры по фото", type="primary"):
             with st.spinner("Анализируем лицо с помощью AI..."):
                 bytes_data = uploaded_file.getvalue()
@@ -677,13 +677,15 @@ if uploaded_file is not None:
                     st.success("✅ Параметры распознаны! Поля ниже автоматически заполнены.")
                     st.session_state.features = features
                     st.session_state.auto_detected = True
-                    st.session_state.last_file_hash = file_hash  # запоминаем хеш
+                    st.session_state.last_file_hash = file_hash
+                    st.session_state.recognition_done = True  # фиксируем факт распознавания
                     st.rerun()
 else:
-    # Если фото не загружено – сбрасываем сохранённый хеш, чтобы при новом фото всё переопределялось
+    # Если фото не загружено – сбрасываем флаги, чтобы при новом фото всё переопределялось
     if "last_file_hash" in st.session_state:
         del st.session_state.last_file_hash
-    # features можно оставить, но они не будут использоваться
+    if "recognition_done" in st.session_state:
+        st.session_state.recognition_done = False
 
 st.markdown('</div>', unsafe_allow_html=True)
 
