@@ -137,13 +137,15 @@ with col2:
     eye_color = st.selectbox("Цвет глаз", options=list(eyes_map.keys()), format_func=lambda x: eyes_map[x], index=list(eyes_map.keys()).index(default_eyes) if default_eyes in eyes_map else 0)
     race = st.selectbox("Раса", options=list(race_map.keys()), format_func=lambda x: race_map[x], index=list(race_map.keys()).index(default_race) if default_race in race_map else 0)
 
-# --- ВЫБОР МЕРОПРИЯТИЯ (новое!) ---
+# --- ВЫБОР МЕРОПРИЯТИЯ (сохраняем в сессию) ---
 st.subheader("📅 Для какого случая подбираем образ?")
 occasion = st.selectbox(
     "Выберите мероприятие",
     options=["Офис", "Свидание", "Вечеринка", "Прогулка", "Спорт", "Деловая встреча", "Свадьба", "Отдых"],
-    index=0
+    index=0,
+    key="occasion_select"  # чтобы сохранять в session_state
 )
+st.session_state.occasion = occasion
 
 # --- Кнопка подбора ---
 # --- БЛОК АВТОМАТИЧЕСКОГО ПОДБОРА ПОСЛЕ РАСПОЗНАВАНИЯ ---
