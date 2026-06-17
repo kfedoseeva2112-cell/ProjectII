@@ -1,49 +1,67 @@
-import requests
 import streamlit as st
-import base64
-
-# CompreFace работает через REST API
-# Бесплатный публичный демо-сервер (можно использовать для теста)
-COMPREFACE_URL = "https://api.compreface.io/v1/recognition/faces"
-API_KEY = "your_api_key_here"  # зарегистрируйтесь на compreface.io
+import cv2
+import numpy as np
+from deepface import DeepFace
+import face_recognition
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в CompreFace API, возвращает параметры лица.
+    Анализирует фото локально через DeepFace.
+    Возвращает словарь с параметрами или None при ошибке.
     """
-    # Кодируем фото в base64
-    encoded = base64.b64encode(image_bytes).decode('utf-8')
-    
-    headers = {
-        "x-api-key": API_KEY,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "image": encoded,
-        "detect_faces": "true"
-    }
-    
     try:
-        response = requests.post(COMPREFACE_URL, json=payload, headers=headers, timeout=15)
-        if response.status_code != 200:
-            return {"error": f"API ошибка: {response.status_code}"}
+        # Преобразуем байты в изображение OpenCV
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if img is None:
+            return {"error": "Не удалось прочитать изображение"}
+
+        # Проверяем, есть ли лицо
+        face_locations = face_recognition.face_locations(img)
+        if not face_locations:
+            return {"error": "Лицо не найдено. Попробуйте другое фото."}
+
+        # Анализируем через DeepFace (возраст, пол, раса, эмоции)
+        analysis = DeepFace.analyze(img, actions=['age', 'gender', 'race'], enforce_detection=False)
         
-        data = response.json()
-        if not data.get("result"):
-            return {"error": "Лицо не найдено на фото"}
-        
-        # Парсим результат (CompreFace возвращает bounding box и landmarks)
-        face = data["result"][0]
-        # Здесь можно добавить логику определения пола, возраста и т.д.
-        # Для простоты пока возвращаем базовые параметры
+        # Берём первый результат (если несколько лиц — берём первое)
+        result = analysis[0] if isinstance(analysis, list) else analysis
+
+        # Извлекаем параметры
+        gender = result.get('gender', '')
+        # DeepFace возвращает словарь {'Man': %, 'Woman': %}, берём ключ с большим значением
+        if isinstance(gender, dict):
+            gender = max(gender, key=gender.get)
+        gender = gender.lower()
+
+        age = result.get('age', 30)
+        # Категоризируем возраст
+        if age < 25:
+            age_category = 'young'
+        elif age < 45:
+            age_category = 'middle'
+        else:
+            age_category = 'old'
+
+        race_dict = result.get('race', {})
+        if race_dict:
+            race = max(race_dict, key=race_dict.get).lower()
+        else:
+            race = 'caucasian'
+
+        # Определяем цвет глаз и волос пока не можем, оставим запасные значения
+        # Для демонстрации можно добавить логику по среднему цвету
+        # Но проще дать пользователю выбрать вручную, если нужно
+
+        # Возвращаем то, что получили
         return {
-            "gender": "female",  # можно определить по дополнительным моделям
-            "skin_tone": "medium",
-            "hair_color": "brown",
+            "gender": gender,
+            "age_category": age_category,
+            "race": race,
+            "skin_tone": "medium",  # можно вычислить по цвету кожи, но для простоты оставим
+            "hair_color": "brown",  # аналогично
             "eye_color": "brown",
-            "race": "caucasian",
-            "age_category": "middle",
             "face_detected": True
         }
     except Exception as e:
-        return {"error": f"Ошибка соединения: {e}"}
+        return {"error": f"Ошибка анализа: {str(e)}"}
