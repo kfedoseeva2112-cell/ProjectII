@@ -146,20 +146,18 @@ occasion = st.selectbox(
 )
 
 # --- Кнопка подбора ---
-if st.button("✨ Подобрать идеальный образ!", type="primary", use_container_width=True):
-    features_manual = {
-        "gender": gender,
-        "skin_tone": skin_tone,
-        "hair_color": hair_color,
-        "eye_color": eye_color,
-        "race": race,
-        "age_category": age_category
-    }
+# --- БЛОК АВТОМАТИЧЕСКОГО ПОДБОРА ПОСЛЕ РАСПОЗНАВАНИЯ ---
+# Если в сессии есть распознанные параметры и флаг auto_detected = True
+if "features" in st.session_state and st.session_state.get("auto_detected", False):
+    features_manual = st.session_state.features
+    # Берём мероприятие из сессии (если не выбрано, то "Офис")
+    occasion = st.session_state.get("occasion", "Офис")
+    
     recommendations = get_recommendations(features_manual, occasion)
-
+    
     st.markdown("---")
     st.subheader("🌟 Ваш персональный образ")
-
+    
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**👗 Одежда**")
@@ -175,7 +173,43 @@ if st.button("✨ Подобрать идеальный образ!", type="prim
         st.markdown("**💄 Макияж**")
         for m in recommendations.get("makeup", []):
             st.markdown(f"- {m}")
+    
+    st.info(f"💡 **Совет стилиста:** {recommendations.get('style_tip', '')}")
+    
+    # Сбрасываем флаг, чтобы не дублировать при повторных обновлениях
+    st.session_state.auto_detected = False
 
+# --- КНОПКА ДЛЯ РУЧНОГО ПОДБОРА (всегда доступна) ---
+if st.button("✨ Подобрать образ вручную (по выбранным параметрам)", type="secondary", use_container_width=True):
+    features_manual = {
+        "gender": gender,
+        "skin_tone": skin_tone,
+        "hair_color": hair_color,
+        "eye_color": eye_color,
+        "race": race,
+        "age_category": age_category
+    }
+    recommendations = get_recommendations(features_manual, occasion)
+    
+    st.markdown("---")
+    st.subheader("🌟 Ваш персональный образ")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**👗 Одежда**")
+        for item in recommendations.get("одежда", []):
+            st.markdown(f"- {item}")
+        st.markdown("**🎨 Цветовая палитра**")
+        for color in recommendations.get("цвета", []):
+            st.markdown(f"- {color}")
+    with col2:
+        st.markdown("**💍 Аксессуары**")
+        for acc in recommendations.get("аксессуары", []):
+            st.markdown(f"- {acc}")
+        st.markdown("**💄 Макияж**")
+        for m in recommendations.get("makeup", []):
+            st.markdown(f"- {m}")
+    
     st.info(f"💡 **Совет стилиста:** {recommendations.get('style_tip', '')}")
 
 # --- Подвал ---
