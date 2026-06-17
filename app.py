@@ -10,23 +10,37 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ------------------- СЛОЖНЫЙ ПРЕМИУМ CSS -------------------
+# ------------------- СУПЕР-ПРЕМИУМ CSS С ФОНОВЫМИ ЭЛЕМЕНТАМИ -------------------
 st.markdown("""
 <style>
-    /* Импорт шрифтов и иконок */
+    /* Импорт шрифтов */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
     @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
     * {
         font-family: 'Inter', sans-serif;
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
-    /* Анимированный градиентный фон для всей страницы */
+    /* Основной контейнер – делаем его прозрачным, фон будет под ним */
     .stApp {
-        background: linear-gradient(-45deg, #f8faff, #eef2ff, #fdf2f8, #f0f4ff);
+        background: transparent !important;
+    }
+
+    /* Настоящий фон с анимированными элементами */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -2;
+        background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
         background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        animation: gradientBG 20s ease infinite;
     }
 
     @keyframes gradientBG {
@@ -35,56 +49,167 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* Стеклянная карточка (glassmorphism) */
+    /* Анимированные круги – парят в фоне */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background-image:
+            radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 90% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(240, 147, 251, 0.1) 0%, transparent 70%);
+        background-repeat: no-repeat;
+        animation: floatBubbles 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatBubbles {
+        0% { background-position: 10% 20%, 90% 80%, 50% 50%; }
+        50% { background-position: 30% 40%, 70% 60%, 40% 70%; }
+        100% { background-position: 50% 30%, 50% 90%, 60% 40%; }
+    }
+
+    /* Добавляем абстрактные линии-сетку поверх фона */
+    .grid-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+    }
+
+    /* Плавающие геометрические фигуры (SVG) – вставляем как дополнительные элементы */
+    .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .floating-shapes div {
+        position: absolute;
+        display: block;
+        opacity: 0.1;
+        animation: floatShape 25s linear infinite;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.4), transparent 70%);
+        width: 300px;
+        height: 300px;
+        top: -150px;
+    }
+
+    .floating-shapes div:nth-child(1) {
+        left: 10%;
+        animation-duration: 28s;
+        animation-delay: 0s;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(240, 147, 251, 0.3), transparent 70%);
+    }
+
+    .floating-shapes div:nth-child(2) {
+        right: 5%;
+        top: 20%;
+        animation-duration: 32s;
+        animation-delay: 5s;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent 70%);
+    }
+
+    .floating-shapes div:nth-child(3) {
+        bottom: 10%;
+        left: 20%;
+        animation-duration: 30s;
+        animation-delay: 10s;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, rgba(118, 75, 162, 0.3), transparent 70%);
+    }
+
+    .floating-shapes div:nth-child(4) {
+        top: 60%;
+        right: 20%;
+        animation-duration: 35s;
+        animation-delay: 3s;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.2), transparent 70%);
+    }
+
+    @keyframes floatShape {
+        0% { transform: translateY(0) rotate(0deg) scale(1); }
+        33% { transform: translateY(-30px) rotate(120deg) scale(1.1); }
+        66% { transform: translateY(30px) rotate(240deg) scale(0.9); }
+        100% { transform: translateY(0) rotate(360deg) scale(1); }
+    }
+
+    /* Стеклянные карточки с дополнительной тенью и прозрачностью */
     .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
         border-radius: 32px;
         padding: 2rem 2.2rem;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.02);
         margin: 1.2rem 0;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        color: #fff;
     }
 
     .glass-card:hover {
-        box-shadow: 0 30px 60px rgba(102, 126, 234, 0.15);
-        transform: translateY(-4px);
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 35px 60px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.4);
     }
 
     /* Заголовок с неоновым свечением */
     .main-title {
-        font-size: 4.2rem;
+        font-size: 4.8rem;
         font-weight: 900;
         text-align: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 40%, #f093fb 100%);
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 30%, #4facfe 70%, #43e97b 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 40px rgba(102, 126, 234, 0.2);
-        letter-spacing: -2px;
+        text-shadow: 0 0 80px rgba(240, 147, 251, 0.3);
+        letter-spacing: -3px;
         margin-bottom: 0.2rem;
-        line-height: 1.1;
-        animation: glowPulse 3s ease-in-out infinite;
+        line-height: 1;
+        animation: glowPulse 4s ease-in-out infinite;
     }
 
     @keyframes glowPulse {
-        0%, 100% { text-shadow: 0 0 30px rgba(102, 126, 234, 0.2); }
-        50% { text-shadow: 0 0 60px rgba(102, 126, 234, 0.4); }
+        0%, 100% { text-shadow: 0 0 40px rgba(240, 147, 251, 0.2); }
+        50% { text-shadow: 0 0 80px rgba(240, 147, 251, 0.5), 0 0 120px rgba(102, 126, 234, 0.2); }
     }
 
     .sub-title {
         text-align: center;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 300;
-        color: #6c7a9a;
-        letter-spacing: 4px;
-        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         padding-bottom: 1rem;
         margin-bottom: 1.5rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
-    /* Индикатор шагов (прогресс-бар) */
+    /* Индикатор шагов */
     .step-progress {
         display: flex;
         justify-content: space-between;
@@ -98,8 +223,8 @@ st.markdown("""
         top: 50%;
         left: 0;
         right: 0;
-        height: 3px;
-        background: #e2e8f0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
         transform: translateY(-50%);
         z-index: 0;
     }
@@ -114,31 +239,32 @@ st.markdown("""
     }
 
     .step-circle {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        background: white;
-        border: 3px solid #cbd5e0;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.2);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        color: #4a5568;
+        color: rgba(255,255,255,0.4);
         transition: all 0.4s ease;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        backdrop-filter: blur(8px);
+        font-size: 1.1rem;
     }
 
     .step-circle.active {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-color: #667eea;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        border-color: #f093fb;
         color: white;
-        transform: scale(1.1);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        transform: scale(1.15);
+        box-shadow: 0 8px 30px rgba(240, 147, 251, 0.4);
     }
 
     .step-circle.done {
-        background: #667eea;
-        border-color: #667eea;
+        background: linear-gradient(135deg, #4facfe, #43e97b);
+        border-color: #4facfe;
         color: white;
     }
 
@@ -146,58 +272,60 @@ st.markdown("""
         margin-top: 8px;
         font-size: 0.75rem;
         font-weight: 600;
-        color: #4a5568;
+        color: rgba(255,255,255,0.4);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     .step-label.active {
-        color: #667eea;
+        color: #f093fb;
     }
 
-    /* Стилизованные поля ввода */
+    /* Поля ввода – прозрачные, с неоновой подсветкой */
     .stSelectbox > div, .stTextInput > div, .stFileUploader > div {
         border-radius: 16px !important;
-        border: 2px solid #e2e8f0 !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        background: rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(8px) !important;
+        color: white !important;
         transition: all 0.3s ease !important;
-        background: rgba(255,255,255,0.6) !important;
-        backdrop-filter: blur(4px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     }
 
     .stSelectbox > div:focus-within, .stTextInput > div:focus-within {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15) !important;
-        background: white !important;
+        border-color: #f093fb !important;
+        box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.15) !important;
+        background: rgba(255,255,255,0.1) !important;
     }
 
     .stFileUploader > div {
-        border: 2px dashed #cbd5e0 !important;
-        background: rgba(247, 250, 252, 0.7) !important;
-        padding: 1.8rem !important;
+        border: 2px dashed rgba(255,255,255,0.2) !important;
+        background: rgba(255,255,255,0.03) !important;
+        padding: 2rem !important;
         text-align: center;
     }
 
     .stFileUploader > div:hover {
-        border-color: #667eea !important;
-        background: rgba(102, 126, 234, 0.04) !important;
+        border-color: #f093fb !important;
+        background: rgba(240, 147, 251, 0.05) !important;
     }
 
-    /* Кнопки с анимацией и неоном */
+    /* Кнопка с неоновым градиентом и анимацией */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         border: none;
-        color: white;
+        color: white !important;
         font-weight: 700;
         font-size: 1.1rem;
-        padding: 0.75rem 2.5rem;
+        padding: 0.8rem 2.5rem;
         border-radius: 60px;
         letter-spacing: 0.5px;
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 30px rgba(240, 147, 251, 0.3);
         width: 100%;
         position: relative;
         overflow: hidden;
+        text-transform: uppercase;
     }
 
     .stButton > button::after {
@@ -213,21 +341,21 @@ st.markdown("""
         transform: scale(0.5);
     }
 
+    .stButton > button:hover {
+        transform: scale(1.04) translateY(-3px);
+        box-shadow: 0 15px 45px rgba(240, 147, 251, 0.5);
+    }
+
     .stButton > button:hover::after {
         opacity: 1;
         transform: scale(1);
     }
 
-    .stButton > button:hover {
-        transform: scale(1.03) translateY(-2px);
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-    }
-
     .stButton > button:active {
-        transform: scale(0.97);
+        transform: scale(0.96);
     }
 
-    /* Карточки рекомендаций с иконками и цветными границами */
+    /* Карточки рекомендаций с градиентной рамкой */
     .rec-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -236,25 +364,39 @@ st.markdown("""
     }
 
     .rec-card {
-        background: white;
-        border-radius: 24px;
+        background: rgba(255,255,255,0.04);
+        backdrop-filter: blur(8px);
+        border-radius: 20px;
         padding: 1.2rem 1.5rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        border-left: 6px solid #667eea;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         transition: all 0.3s ease;
-        backdrop-filter: blur(4px);
-        background: rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .rec-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(240,147,251,0.1), rgba(79,172,254,0.05));
+        border-radius: 20px;
+        z-index: -1;
     }
 
     .rec-card:hover {
-        transform: translateY(-6px) scale(1.01);
-        box-shadow: 0 16px 40px rgba(102, 126, 234, 0.12);
+        transform: translateY(-6px) scale(1.02);
+        border-color: rgba(240,147,251,0.3);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 
     .rec-card h4 {
         font-size: 1rem;
         font-weight: 700;
-        color: #2d3748;
+        color: #fff;
         margin-bottom: 0.6rem;
         display: flex;
         align-items: center;
@@ -269,9 +411,9 @@ st.markdown("""
 
     .rec-card li {
         padding: 0.4rem 0;
-        border-bottom: 1px solid #edf2f7;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
         font-weight: 400;
-        color: #4a5568;
+        color: rgba(255,255,255,0.8);
         font-size: 0.95rem;
         display: flex;
         align-items: center;
@@ -283,13 +425,13 @@ st.markdown("""
     }
 
     .rec-card li::before {
-        content: "•";
-        color: #667eea;
+        content: "✦";
+        color: #f093fb;
         font-weight: 900;
-        font-size: 1.2rem;
+        font-size: 0.8rem;
     }
 
-    /* Цветовая палитра в виде квадратов */
+    /* Цветовые квадраты */
     .color-swatch-container {
         display: flex;
         flex-wrap: wrap;
@@ -301,87 +443,81 @@ st.markdown("""
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 2px solid white;
-        transition: transform 0.2s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border: 2px solid rgba(255,255,255,0.2);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .color-swatch:hover {
-        transform: scale(1.12);
+        transform: scale(1.15);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
-    /* Совет стилиста с кавычками */
+    /* Совет стилиста – с градиентом и иконкой */
     .tip-box {
-        background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+        background: linear-gradient(135deg, rgba(240,147,251,0.12), rgba(79,172,254,0.08));
+        backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 1.5rem 2rem;
-        border-left: 8px solid #f6ad55;
+        border: 1px solid rgba(255,255,255,0.06);
         margin: 1.5rem 0;
         font-style: italic;
         font-weight: 500;
-        color: #4a3a5c;
+        color: rgba(255,255,255,0.9);
         position: relative;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
     .tip-box::before {
         content: "“";
-        font-size: 3rem;
-        color: #f6ad55;
+        font-size: 3.5rem;
+        color: rgba(240,147,251,0.3);
         position: absolute;
         top: -10px;
-        left: 12px;
-        opacity: 0.3;
+        left: 16px;
     }
 
-    /* Параметры, которые указал пользователь – в виде красивых тегов */
+    /* Теги параметров */
     .param-tag {
         display: inline-block;
-        background: #edf2f7;
+        background: rgba(255,255,255,0.06);
         border-radius: 30px;
         padding: 0.2rem 1rem;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #2d3748;
+        color: rgba(255,255,255,0.8);
         margin: 0.2rem 0.2rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid rgba(255,255,255,0.08);
         transition: all 0.2s;
+        backdrop-filter: blur(4px);
     }
 
     .param-tag:hover {
-        background: #667eea;
-        color: white;
-        border-color: #667eea;
+        background: rgba(240,147,251,0.2);
+        color: #fff;
+        border-color: rgba(240,147,251,0.4);
     }
 
-    /* Анимация появления */
-    .fade-in {
-        animation: fadeInUp 0.7s ease both;
-    }
-
-    @keyframes fadeInUp {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Отдельный блок для цветотипа */
+    /* Сезонный бейдж */
     .season-badge {
         display: inline-block;
         padding: 0.4rem 1.2rem;
         border-radius: 40px;
         font-weight: 700;
         font-size: 0.9rem;
-        background: linear-gradient(135deg, #f6ad55, #ed8936);
+        background: linear-gradient(135deg, #f093fb, #f5576c);
         color: white;
-        box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+        box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    /* Разделитель с иконкой */
+    /* Разделитель */
     .divider {
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 2rem 0;
-        color: #a0aec0;
+        color: rgba(255,255,255,0.2);
         font-size: 0.8rem;
         gap: 1rem;
     }
@@ -389,8 +525,29 @@ st.markdown("""
     .divider::before, .divider::after {
         content: '';
         flex: 1;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    /* Анимация появления */
+    .fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Подвал */
+    .footer {
+        text-align: center;
+        color: rgba(255,255,255,0.2);
+        font-size: 0.75rem;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        letter-spacing: 1px;
     }
 
     /* Адаптив */
@@ -400,9 +557,21 @@ st.markdown("""
         .rec-grid { grid-template-columns: 1fr; }
         .step-progress { flex-direction: column; gap: 0.8rem; }
         .step-item { flex-direction: row; gap: 0.8rem; justify-content: flex-start; }
-        .step-circle { width: 32px; height: 32px; font-size: 0.8rem; }
+        .step-circle { width: 36px; height: 36px; font-size: 0.8rem; }
+        .step-progress::before { display: none; }
     }
 </style>
+""", unsafe_allow_html=True)
+
+# ------------------- ВСТАВЛЯЕМ ФОНОВЫЕ ЭЛЕМЕНТЫ -------------------
+st.markdown("""
+<div class="grid-overlay"></div>
+<div class="floating-shapes">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
 """, unsafe_allow_html=True)
 
 # ------------------- ЗАГОЛОВОК -------------------
@@ -410,26 +579,25 @@ st.markdown('<div class="main-title">StyleMate Pro</div>', unsafe_allow_html=Tru
 st.markdown('<div class="sub-title">✨ ИИ-стилист с премиум-анализом</div>', unsafe_allow_html=True)
 
 # ------------------- ИНДИКАТОР ШАГОВ -------------------
-# Определяем текущий шаг (можно сделать динамическим позже)
 step = 1
 if "features" in st.session_state and st.session_state.get("auto_detected", False):
     step = 2
-if "recommendations_done" in st.session_state:
+if "recommendations" in st.session_state:
     step = 3
 
 st.markdown(f"""
 <div class="step-progress">
     <div class="step-item">
-        <div class="step-circle { 'active' if step>=1 else '' }">1</div>
-        <div class="step-label { 'active' if step>=1 else '' }">Фото</div>
+        <div class="step-circle {'active' if step>=1 else ''}">1</div>
+        <div class="step-label {'active' if step>=1 else ''}">Фото</div>
     </div>
     <div class="step-item">
-        <div class="step-circle { 'active' if step>=2 else '' }">2</div>
-        <div class="step-label { 'active' if step>=2 else '' }">Параметры</div>
+        <div class="step-circle {'active' if step>=2 else ''}">2</div>
+        <div class="step-label {'active' if step>=2 else ''}">Параметры</div>
     </div>
     <div class="step-item">
-        <div class="step-circle { 'active' if step>=3 else '' }">3</div>
-        <div class="step-label { 'active' if step>=3 else '' }">Образ</div>
+        <div class="step-circle {'active' if step>=3 else ''}">3</div>
+        <div class="step-label {'active' if step>=3 else ''}">Образ</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -504,7 +672,6 @@ with c2:
     body_type = st.selectbox("Тип фигуры", options=list(body_type_map.keys()), format_func=lambda x: body_type_map[x],
                              index=0)
 
-# Выбор мероприятия
 st.markdown("#### 📅 Шаг 3. Выберите случай")
 occasion = st.selectbox(
     "Для какого мероприятия подбираем образ?",
@@ -532,7 +699,6 @@ if st.button("✨ Создать идеальный образ", type="primary",
     recommendations = get_recommendations(features_full, occasion)
     st.session_state.recommendations = recommendations
     st.session_state.features_full = features_full
-    st.session_state.recommendations_done = True
     st.rerun()
 
 # ------------------- ВЫВОД РЕЗУЛЬТАТА -------------------
@@ -567,15 +733,13 @@ if "recommendations" in st.session_state:
 
         st.markdown("#### 🎨 Цветовая палитра")
         if rec.get("цвета"):
-            # Показываем как квадраты
             colors_html = "<div class='color-swatch-container'>"
             for color in rec["цвета"]:
-                # Преобразуем название цвета в hex (приблизительно)
                 color_hex = {
                     "белый": "#FFFFFF", "черный": "#000000", "серый": "#808080",
-                    "синий": "#007BFF", "голубой": "#87CEEB", "лавандовый": "#B39DDB",
-                    "розовый": "#FF69B4", "красный": "#DC3545", "бордовый": "#800020",
-                    "зеленый": "#28A745", "оливковый": "#808000", "мятный": "#98FF98",
+                    "синий": "#4A90D9", "голубой": "#87CEEB", "лавандовый": "#B39DDB",
+                    "розовый": "#FF6B81", "красный": "#FF4757", "бордовый": "#800020",
+                    "зеленый": "#2ED573", "оливковый": "#808000", "мятный": "#98FF98",
                     "желтый": "#FFC107", "золотой": "#FFD700", "бежевый": "#F5F5DC",
                     "оранжевый": "#FD7E14", "персиковый": "#FFDAB9", "терракотовый": "#CC7A4B",
                     "вишневый": "#800020", "изумрудный": "#50C878", "бирюзовый": "#40E0D0",
@@ -620,7 +784,7 @@ if "recommendations" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
 
-    # Параметры, которые были введены (визуализация)
+    # Параметры в виде тегов
     with st.expander("📋 Ваши параметры (для справки)"):
         tags = ""
         for k, v in features_full.items():
@@ -658,4 +822,4 @@ with st.expander("ℹ️ Как это работает"):
     - База стилистических правил: более 40 комбинаций
     - Интерфейс: Streamlit с кастомным CSS
     """)
-st.markdown('<div style="text-align:center; color:#a0aec0; font-size:0.8rem; margin-top:1rem;">© 2026 StyleMate Pro — создано с ❤️ для вашего стиля</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">© 2026 StyleMate Pro — создано с ❤️ для вашего стиля</div>', unsafe_allow_html=True)
