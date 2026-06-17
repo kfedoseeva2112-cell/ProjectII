@@ -3,46 +3,76 @@ from PIL import Image
 from api_analyzer import analyze_face
 from matcher import get_recommendations
 
+# --- Настройка страницы ---
 st.set_page_config(page_title="StyleMate", layout="centered", initial_sidebar_state="collapsed")
 
-# --- Стилизация ---
+# --- ПРЕМИУМ CSS (дизайн от профи) ---
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+    
     .main-title {
-        font-size: 3rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #6C63FF, #FF6B6B, #FECA57);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.2rem;
+        letter-spacing: -1px;
     }
     .sub-title {
         text-align: center;
-        color: #666;
+        color: #6C757D;
         font-size: 1.2rem;
+        font-weight: 300;
         margin-bottom: 2rem;
+        letter-spacing: 2px;
     }
-    .feature-box {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 10px 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    .rec-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px 30px;
+        margin: 15px 0;
+        box-shadow: 0 10px 40px rgba(108, 99, 255, 0.1);
+        border-left: 5px solid #6C63FF;
+        transition: transform 0.2s;
     }
-    .recommendation {
-        background: #fff;
-        border-left: 5px solid #4ecdc4;
-        padding: 15px 20px;
-        margin: 10px 0;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    .rec-card:hover { transform: translateY(-3px); }
+    .stButton > button {
+        background: linear-gradient(135deg, #6C63FF, #5A52D5);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 40px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(108, 99, 255, 0.3);
+    }
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(108, 99, 255, 0.4);
+    }
+    .divider {
+        background: linear-gradient(90deg, transparent, #6C63FF, transparent);
+        height: 2px;
+        margin: 30px 0;
+        opacity: 0.3;
+    }
+    .tip-box {
+        background: #F8F9FA;
+        border-radius: 16px;
+        padding: 20px 25px;
+        border: 1px solid #E9ECEF;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-title">🎨 StyleMate</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Интеллектуальный стилист на основе компьютерного зрения</div>', unsafe_allow_html=True)
+# --- Заголовки ---
+st.markdown('<div class="main-title">StyleMate</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Ваш персональный AI-стилист</div>', unsafe_allow_html=True)
 
 # --- Загрузка фото ---
 uploaded_file = st.file_uploader("📸 Загрузите ваше фото", type=["jpg", "jpeg", "png"])
@@ -56,7 +86,7 @@ with col1:
 with col2:
     if uploaded_file is not None:
         if st.button("🔍 Распознать параметры по фото", type="primary"):
-            with st.spinner("Анализируем лицо..."):
+            with st.spinner("Анализируем лицо (это может занять 10–15 секунд)..."):
                 bytes_data = uploaded_file.getvalue()
                 features = analyze_face(bytes_data)
                 if "error" in features:
@@ -64,17 +94,15 @@ with col2:
                     st.info("Пожалуйста, введите параметры вручную ниже.")
                 else:
                     st.success("✅ Параметры распознаны!")
-                    # Сохраняем в session_state
                     st.session_state.features = features
                     st.session_state.auto_detected = True
-                    # Показываем что распознано
                     st.json(features)
 
-# --- Ручной ввод параметров (всегда доступен) ---
+# --- Ручной ввод (всегда доступен) ---
 st.markdown("---")
-st.subheader("✏️ Параметры внешности (введите вручную, если автоматика не сработала)")
+st.subheader("✏️ Параметры внешности (введите сами, если автоматика не сработала)")
 
-# Если есть распознанные параметры, подставляем их как значения по умолчанию
+# Подставляем распознанные значения, если есть
 default_gender = st.session_state.get("features", {}).get("gender", "female")
 default_skin = st.session_state.get("features", {}).get("skin_tone", "fair")
 default_hair = st.session_state.get("features", {}).get("hair_color", "blond")
@@ -100,6 +128,14 @@ with col2:
     eye_color = st.selectbox("Цвет глаз", options=list(eyes_map.keys()), format_func=lambda x: eyes_map[x], index=list(eyes_map.keys()).index(default_eyes) if default_eyes in eyes_map else 0)
     race = st.selectbox("Раса", options=list(race_map.keys()), format_func=lambda x: race_map[x], index=list(race_map.keys()).index(default_race) if default_race in race_map else 0)
 
+# --- ВЫБОР МЕРОПРИЯТИЯ (новое!) ---
+st.subheader("📅 Для какого случая подбираем образ?")
+occasion = st.selectbox(
+    "Выберите мероприятие",
+    options=["Офис", "Свидание", "Вечеринка", "Прогулка", "Спорт", "Деловая встреча", "Свадьба", "Отдых"],
+    index=0
+)
+
 # --- Кнопка подбора ---
 if st.button("✨ Подобрать идеальный образ!", type="primary", use_container_width=True):
     features_manual = {
@@ -110,12 +146,11 @@ if st.button("✨ Подобрать идеальный образ!", type="prim
         "race": race,
         "age_category": age_category
     }
-    recommendations = get_recommendations(features_manual)
+    recommendations = get_recommendations(features_manual, occasion)
 
     st.markdown("---")
     st.subheader("🌟 Ваш персональный образ")
 
-    # Вывод в две колонки
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**👗 Одежда**")
@@ -134,11 +169,10 @@ if st.button("✨ Подобрать идеальный образ!", type="prim
 
     st.info(f"💡 **Совет стилиста:** {recommendations.get('style_tip', '')}")
 
-# --- Блок с описанием (для красоты) ---
+# --- Подвал ---
 st.markdown("---")
 with st.expander("ℹ️ Как это работает"):
     st.markdown("""
-    **StyleMate** использует передовые алгоритмы компьютерного зрения для анализа вашей внешности.
-    Вы можете загрузить фото и нажать «Распознать параметры», либо ввести их вручную.
-    На основе ваших параметров и базы стилистических правил мы подбираем идеальный образ.
+    **StyleMate** анализирует ваше фото через локальную нейросеть (DeepFace) и определяет пол, возраст и расу.
+    Вы также можете ввести параметры вручную. На основе выбранного мероприятия и стилистических правил мы подбираем идеальный образ.
     """)
