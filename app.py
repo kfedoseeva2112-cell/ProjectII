@@ -1,41 +1,9 @@
 import streamlit as st
 from PIL import Image
-import random
+import hashlib
+from api_analyzer import analyze_face
+from matcher import get_recommendations
 
-# --- ЗАГЛУШКА ДЛЯ API (имитация распознавания) ---
-def analyze_face(image_bytes):
-    # Имитация работы AI – возвращает случайные параметры
-    genders = ["female", "male"]
-    ages = ["young", "middle", "old"]
-    races = ["caucasian", "asian", "african", "hispanic"]
-    skin_tones = ["fair", "medium", "dark"]
-    hair_colors = ["blond", "brown", "black", "red", "gray"]
-    eye_colors = ["blue", "green", "brown", "hazel"]
-    return {
-        "gender": random.choice(genders),
-        "age_category": random.choice(ages),
-        "race": random.choice(races),
-        "skin_tone": random.choice(skin_tones),
-        "hair_color": random.choice(hair_colors),
-        "eye_color": random.choice(eye_colors),
-        "face_detected": True
-    }
-
-# --- ИМПОРТ matcher (если есть) ---
-try:
-    from matcher import get_recommendations
-except ImportError:
-    # Если matcher нет – создаём заглушку
-    def get_recommendations(features, occasion):
-        return {
-            "одежда": ["Классический пиджак", "Брюки нейтрального цвета", "Простая блуза"],
-            "цвета": ["Серый", "Синий", "Белый"],
-            "аксессуары": ["Кожаный ремень", "Сумка-шопер"],
-            "makeup": ["Естественный макияж"],
-            "style_tip": "Базовый универсальный образ."
-        }
-
-# --- НАСТРОЙКИ СТРАНИЦЫ ---
 st.set_page_config(
     page_title="StyleMate Pro",
     page_icon="🎨",
@@ -43,19 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- ФОНОВЫЕ МОДНЫЕ ИКОНКИ (добавляем сразу) ---
-st.markdown("""
-<div class="fashion-icons">
-    <span>💄</span>
-    <span>👗</span>
-    <span>👠</span>
-    <span>🧥</span>
-    <span>👜</span>
-    <span>✂️</span>
-</div>
-""", unsafe_allow_html=True)
-
-# ------------------- ПРЕМИУМ CSS (светлый) -------------------
+# ------------------- ПРЕМИУМ CSS (светлый, с модными иконками) -------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
@@ -72,7 +28,6 @@ st.markdown("""
         background: transparent !important;
     }
 
-    /* Светлый градиентный фон */
     body::before {
         content: '';
         position: fixed;
@@ -92,7 +47,6 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* Светлые анимированные круги */
     body::after {
         content: '';
         position: fixed;
@@ -115,7 +69,6 @@ st.markdown("""
         100% { background-position: 50% 30%, 50% 90%, 60% 40%; }
     }
 
-    /* Светлая сетка */
     .grid-overlay {
         position: fixed;
         top: 0;
@@ -130,7 +83,6 @@ st.markdown("""
         pointer-events: none;
     }
 
-    /* Светлые плавающие фигуры */
     .floating-shapes {
         position: fixed;
         top: 0;
@@ -235,7 +187,7 @@ st.markdown("""
         100% { transform: translateY(0) rotate(360deg) scale(1); }
     }
 
-    /* Стеклянные карточки (светлая версия) */
+    /* Стеклянные карточки */
     .glass-card {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(16px) saturate(180%);
@@ -255,7 +207,6 @@ st.markdown("""
         border-color: rgba(102, 126, 234, 0.2);
     }
 
-    /* Заголовок – яркий, но не агрессивный */
     .main-title {
         font-size: 4.8rem;
         font-weight: 900;
@@ -286,7 +237,6 @@ st.markdown("""
         margin-bottom: 1.5rem;
     }
 
-    /* Шаги – светлые */
     .step-progress {
         display: flex;
         justify-content: space-between;
@@ -358,7 +308,6 @@ st.markdown("""
         color: #667eea;
     }
 
-    /* Поля ввода – светлые */
     .stSelectbox > div, .stTextInput > div, .stFileUploader > div {
         border-radius: 16px !important;
         border: 2px solid #e2e8f0 !important;
@@ -387,7 +336,6 @@ st.markdown("""
         background: rgba(102, 126, 234, 0.03) !important;
     }
 
-    /* Кнопка – мягкий градиент */
     .stButton > button {
         background: linear-gradient(135deg, #667eea, #764ba2);
         border: none;
@@ -432,7 +380,6 @@ st.markdown("""
         transform: scale(0.96);
     }
 
-    /* Карточки рекомендаций – светлые */
     .rec-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -508,7 +455,6 @@ st.markdown("""
         font-size: 0.8rem;
     }
 
-    /* Цветовые квадраты */
     .color-swatch-container {
         display: flex;
         flex-wrap: wrap;
@@ -530,7 +476,6 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
 
-    /* Совет стилиста – светлый */
     .tip-box {
         background: rgba(250, 245, 255, 0.7);
         backdrop-filter: blur(10px);
@@ -554,7 +499,6 @@ st.markdown("""
         left: 16px;
     }
 
-    /* Теги параметров – светлые */
     .param-tag {
         display: inline-block;
         background: #edf2f7;
@@ -574,7 +518,6 @@ st.markdown("""
         border-color: #667eea;
     }
 
-    /* Сезонный бейдж – светлый */
     .season-badge {
         display: inline-block;
         padding: 0.4rem 1.2rem;
@@ -586,7 +529,6 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(102,126,234,0.2);
     }
 
-    /* Разделитель */
     .divider {
         display: flex;
         align-items: center;
@@ -604,7 +546,6 @@ st.markdown("""
         background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
     }
 
-    /* Анимация появления */
     .fade-in {
         animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
@@ -614,7 +555,6 @@ st.markdown("""
         100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Подвал */
     .footer {
         text-align: center;
         color: #a0aec0;
@@ -625,7 +565,6 @@ st.markdown("""
         letter-spacing: 1px;
     }
 
-    /* Адаптив */
     @media (max-width: 640px) {
         .main-title { font-size: 2.8rem; }
         .glass-card { padding: 1.2rem; }
@@ -639,7 +578,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ (сетка и фигуры) -------------------
+# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ -------------------
 st.markdown("""
 <div class="grid-overlay"></div>
 <div class="floating-shapes">
@@ -647,6 +586,14 @@ st.markdown("""
     <div></div>
     <div></div>
     <div></div>
+</div>
+<div class="fashion-icons">
+    <span>💄</span>
+    <span>👗</span>
+    <span>👠</span>
+    <span>🧥</span>
+    <span>👜</span>
+    <span>✂️</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -656,7 +603,7 @@ st.markdown('<div class="sub-title">✨ ИИ-стилист с премиум-а
 
 # ------------------- ИНДИКАТОР ШАГОВ -------------------
 step = 1
-if "features" in st.session_state and st.session_state.get("auto_detected", False):
+if "features" in st.session_state and st.session_state.get("recognition_done", False):
     step = 2
 if "recommendations" in st.session_state:
     step = 3
@@ -695,21 +642,51 @@ st.markdown("#### 📸 Шаг 1. Загрузите ваше фото")
 
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
+# Если фото загружено
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Ваше фото", use_column_width=True)
 
-    if st.button("🔍 Распознать параметры по фото", type="primary"):
-        with st.spinner("Анализируем лицо с помощью AI..."):
-            bytes_data = uploaded_file.getvalue()
-            features = analyze_face(bytes_data)
-            if "error" in features:
-                st.error(f"❌ {features['error']}")
-            else:
-                st.success("✅ Параметры распознаны! Поля ниже автоматически заполнены.")
-                st.session_state.features = features
-                st.session_state.auto_detected = True
-                st.rerun()
+    # Вычисляем хеш содержимого файла
+    file_hash = hashlib.md5(uploaded_file.getvalue()).hexdigest()
+
+    # Проверяем, было ли уже выполнено распознавание для этого фото
+    if st.session_state.get("recognition_done", False) and st.session_state.get("last_file_hash") == file_hash:
+        st.success("✅ Параметры уже распознаны для этого фото (использованы сохранённые данные).")
+        features = st.session_state.features
+        # Показываем распознанные параметры (красиво)
+        st.markdown("**Распознанные параметры:**")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"- **Пол:** {gender_map.get(features.get('gender', 'неизвестно'), 'неизвестно')}")
+            st.markdown(f"- **Тон кожи:** {skin_map.get(features.get('skin_tone', 'неизвестно'), 'неизвестно')}")
+            st.markdown(f"- **Цвет волос:** {hair_map.get(features.get('hair_color', 'неизвестно'), 'неизвестно')}")
+        with col2:
+            st.markdown(f"- **Возраст:** {age_map.get(features.get('age_category', 'неизвестно'), 'неизвестно')}")
+            st.markdown(f"- **Цвет глаз:** {eyes_map.get(features.get('eye_color', 'неизвестно'), 'неизвестно')}")
+            st.markdown(f"- **Раса:** {race_map.get(features.get('race', 'неизвестно'), 'неизвестно')}")
+    else:
+        # Если распознавание ещё не выполнено для этого фото – показываем кнопку
+        if st.button("🔍 Распознать параметры по фото", type="primary"):
+            with st.spinner("Анализируем лицо с помощью AI..."):
+                bytes_data = uploaded_file.getvalue()
+                features = analyze_face(bytes_data)
+                if "error" in features:
+                    st.error(f"❌ {features['error']}")
+                else:
+                    st.success("✅ Параметры распознаны! Поля ниже автоматически заполнены.")
+                    st.session_state.features = features
+                    st.session_state.auto_detected = True
+                    st.session_state.last_file_hash = file_hash
+                    st.session_state.recognition_done = True  # фиксируем факт распознавания
+                    st.rerun()
+else:
+    # Если фото не загружено – сбрасываем флаги, чтобы при новом фото всё переопределялось
+    if "last_file_hash" in st.session_state:
+        del st.session_state.last_file_hash
+    if "recognition_done" in st.session_state:
+        st.session_state.recognition_done = False
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------- ШАГ 2: ПАРАМЕТРЫ -------------------
@@ -717,6 +694,7 @@ st.markdown('<div class="glass-card fade-in">', unsafe_allow_html=True)
 st.markdown("#### ✏️ Шаг 2. Уточните все параметры внешности")
 st.markdown("_Чем точнее вы заполните, тем лучше будет результат._")
 
+# Значения по умолчанию – если есть распознанные, подставляем их
 default_gender = st.session_state.get("features", {}).get("gender", "female")
 default_skin = st.session_state.get("features", {}).get("skin_tone", "fair")
 default_hair = st.session_state.get("features", {}).get("hair_color", "blond")
@@ -777,16 +755,14 @@ if st.button("✨ Создать идеальный образ", type="primary",
     st.session_state.features_full = features_full
     st.rerun()
 
-# ------------------- ВЫВОД РЕЗУЛЬТАТА (ИЛИ ЗАГЛУШКИ) -------------------
+# ------------------- ВЫВОД РЕЗУЛЬТАТА (или заглушки) -------------------
 if "recommendations" in st.session_state:
-    # --- ПОКАЗЫВАЕМ РЕАЛЬНЫЕ РЕКОМЕНДАЦИИ ---
     rec = st.session_state.recommendations
     features_full = st.session_state.features_full
 
     st.markdown('<div class="glass-card fade-in">', unsafe_allow_html=True)
     st.markdown("#### 🌟 Ваш персональный образ готов!")
 
-    # Бейдж цветотипа
     season_emoji = {"spring": "🌸", "summer": "☀️", "autumn": "🍂", "winter": "❄️"}
     st.markdown(f"<div style='display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem;'>"
                 f"<span class='season-badge'>{season_emoji.get(features_full['color_type'], '')} {color_type_map.get(features_full['color_type'], '')}</span>"
@@ -852,7 +828,6 @@ if "recommendations" in st.session_state:
         else:
             st.info("Нет рекомендаций")
 
-    # Совет стилиста
     if rec.get("style_tip"):
         st.markdown(f"""
         <div class="tip-box">
@@ -860,7 +835,6 @@ if "recommendations" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
 
-    # Параметры в виде тегов
     with st.expander("📋 Ваши параметры (для справки)"):
         tags = ""
         for k, v in features_full.items():
@@ -887,7 +861,7 @@ if "recommendations" in st.session_state:
     st.markdown('</div>', unsafe_allow_html=True)
 
 else:
-    # --- ЗАГЛУШКИ: показываем стильные карточки-советы (заполняем пустые плашки) ---
+    # Заглушки: показываем стильные советы
     st.markdown('<div class="glass-card fade-in">', unsafe_allow_html=True)
     st.markdown("#### 💡 Ваш будущий образ")
     st.markdown("_Заполните параметры и нажмите «Создать идеальный образ», чтобы получить персональные рекомендации._")
@@ -936,7 +910,7 @@ with st.expander("ℹ️ Как это работает"):
     Вы загружаете фото, система определяет параметры внешности, а затем на основе ваших данных и выбранного мероприятия подбирает идеальный образ.
 
     **Технологии:**
-    - Распознавание лиц: DeepFace (локально) – в демо-версии используется имитация
+    - Распознавание лиц: Face++ API (реальное)
     - База стилистических правил: более 40 комбинаций
     - Интерфейс: Streamlit с кастомным CSS
     """)
