@@ -1,4 +1,5 @@
 streamlit
 pillow
 numpy
-requests
+opencv-python-headless
+deepface
