@@ -3,7 +3,7 @@ import os
 
 def load_rules():
     script_dir = os.path.dirname(__file__)
-    json_path = os.path.join(script_dir, 'data', 'style_rules.json')
+    json_path = os.path.join(script_dir, 'style_rules.json')
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     # Если данные — массив, возвращаем его, иначе оборачиваем
