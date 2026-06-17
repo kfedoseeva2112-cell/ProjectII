@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ------------------- ПРЕМИУМ-СВЕТЛЫЙ CSS (ВОССТАНОВЛЕН) -------------------
+# ------------------- CSS (полный, премиум-светлый) -------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
@@ -151,7 +151,6 @@ st.markdown("""
         100% { transform: translateY(0) rotate(360deg) scale(1); }
     }
 
-    /* Модные иконки на фоне */
     .fashion-icons {
         position: fixed;
         top: 0;
@@ -576,7 +575,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ (иконки, сетка, фигуры) -------------------
+# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ -------------------
 st.markdown("""
 <div class="fashion-icons">
     <span>💄</span>
@@ -663,7 +662,7 @@ if uploaded_file is not None:
                 st.session_state.auto_detected = True
                 st.rerun()
 
-# ------------------- ПАРАМЕТРЫ (ручной ввод) -------------------
+# ------------------- РУЧНОЙ ВВОД ПАРАМЕТРОВ -------------------
 st.markdown("#### ✏️ Шаг 2. Уточните параметры внешности")
 st.markdown("_Чем точнее вы заполните, тем лучше будет результат._")
 
@@ -725,42 +724,125 @@ if st.button("✨ Создать идеальный образ", type="primary",
     st.session_state.features_full = features_full
     st.rerun()
 
-# ------------------- ВЫВОД РЕЗУЛЬТАТА (рекомендации или заглушки) -------------------
+# ------------------- ВЫВОД РЕЗУЛЬТАТА (КРАСИВЫЙ) -------------------
 if "recommendations" in st.session_state:
     rec = st.session_state.recommendations
     features_full = st.session_state.features_full
 
     st.markdown("#### 🌟 Ваш персональный образ готов!")
-    # Здесь вы можете вставить код вывода рекомендаций (карточки, цвета, совет)
-    # Для краткости я оставляю минимальный вывод, но вы можете расширить как раньше
-    st.json(rec)  # временно, чтобы не потерять
+
+    # Бейдж цветотипа
+    if "color_type" in features_full:
+        season_emoji = {"spring": "🌸", "summer": "☀️", "autumn": "🍂", "winter": "❄️"}
+        st.markdown(f"""
+        <div style='display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem;'>
+            <span class='season-badge'>{season_emoji.get(features_full['color_type'], '')} {color_type_map.get(features_full['color_type'], '')}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    col_left, col_right = st.columns(2)
+
+    with col_left:
+        st.markdown("#### 👗 Одежда")
+        if rec.get("одежда"):
+            st.markdown(f"""
+            <div class="rec-card">
+                <ul>
+                    {''.join([f'<li>{item}</li>' for item in rec["одежда"]])}
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("Нет рекомендаций")
+
+        st.markdown("#### 🎨 Цветовая палитра")
+        if rec.get("цвета"):
+            color_hex_map = {
+                "белый": "#FFFFFF", "черный": "#000000", "серый": "#808080",
+                "синий": "#4A90D9", "голубой": "#87CEEB", "лавандовый": "#B39DDB",
+                "розовый": "#FF6B81", "красный": "#FF4757", "бордовый": "#800020",
+                "зеленый": "#2ED573", "оливковый": "#808000", "мятный": "#98FF98",
+                "желтый": "#FFC107", "золотой": "#FFD700", "бежевый": "#F5F5DC",
+                "оранжевый": "#FD7E14", "персиковый": "#FFDAB9", "терракотовый": "#CC7A4B",
+                "вишневый": "#800020", "изумрудный": "#50C878", "бирюзовый": "#40E0D0",
+                "фиолетовый": "#8A2BE2", "сиреневый": "#C8A2C8", "серебро": "#C0C0C0"
+            }
+            colors_html = "<div class='color-swatch-container'>"
+            for color in rec["цвета"]:
+                hex_color = color_hex_map.get(color.lower(), "#6C63FF")
+                colors_html += f"<div class='color-swatch' style='background:{hex_color};'></div>"
+            colors_html += "</div>"
+            st.markdown(colors_html, unsafe_allow_html=True)
+        else:
+            st.info("Нет рекомендаций")
+
+    with col_right:
+        st.markdown("#### 💍 Аксессуары")
+        if rec.get("аксессуары"):
+            st.markdown(f"""
+            <div class="rec-card">
+                <ul>
+                    {''.join([f'<li>{item}</li>' for item in rec["аксессуары"]])}
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("Нет рекомендаций")
+
+        st.markdown("#### 💄 Макияж")
+        if rec.get("makeup"):
+            st.markdown(f"""
+            <div class="rec-card">
+                <ul>
+                    {''.join([f'<li>{item}</li>' for item in rec["makeup"]])}
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("Нет рекомендаций")
+
+    # Совет стилиста
+    if rec.get("style_tip"):
+        st.markdown(f"""
+        <div class="tip-box">
+            <strong>💡 Совет стилиста:</strong> {rec['style_tip']}
+        </div>
+        """, unsafe_allow_html=True)
+
+# ------------------- ЗАГЛУШКИ (если рекомендаций ещё нет) -------------------
 else:
     st.markdown("#### 💡 Ваш будущий образ")
     st.markdown("_Заполните параметры и нажмите «Создать идеальный образ»._")
-    # Заглушки – три карточки с советами
+
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""
         <div class="rec-card" style="border-left-color: #f6ad55;">
             <h4>👗 Совет дня</h4>
-            <ul><li>Носите то, что подчеркивает индивидуальность</li>
-            <li>Качественные базовые вещи – основа гардероба</li></ul>
+            <ul>
+                <li>Носите то, что подчеркивает индивидуальность</li>
+                <li>Качественные базовые вещи – основа гардероба</li>
+            </ul>
         </div>
         """, unsafe_allow_html=True)
     with col2:
         st.markdown("""
         <div class="rec-card" style="border-left-color: #4facfe;">
             <h4>🎨 Цветовая гармония</h4>
-            <ul><li>Подбирайте оттенки под свой цветотип</li>
-            <li>Контрастные акценты делают образ ярче</li></ul>
+            <ul>
+                <li>Подбирайте оттенки под свой цветотип</li>
+                <li>Контрастные акценты делают образ ярче</li>
+            </ul>
         </div>
         """, unsafe_allow_html=True)
     with col3:
         st.markdown("""
         <div class="rec-card" style="border-left-color: #43e97b;">
             <h4>💡 Аксессуары</h4>
-            <ul><li>Один яркий аксессуар – и образ заиграет</li>
-            <li>Меньше – значит больше</li></ul>
+            <ul>
+                <li>Один яркий аксессуар – и образ заиграет</li>
+                <li>Меньше – значит больше</li>
+            </ul>
         </div>
         """, unsafe_allow_html=True)
 
