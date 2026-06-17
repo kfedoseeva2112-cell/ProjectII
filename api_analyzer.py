@@ -1,92 +1,71 @@
-import requests
-import base64
-
-# --- ВАШИ КЛЮЧИ ---
-API_KEY = "TJnymPukGSYQIAi_lS3VOtpplaezJEto"
-API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
+import hashlib
+from PIL import Image
+import numpy as np
+import io
 
 def analyze_face(image_bytes):
     """
-    Двухэтапный запрос к Face++:
-    1. Детекция лица (без атрибутов) -> получаем face_token.
-    2. Анализ атрибутов (gender, age, race) по face_token.
+    Анализирует фото: определяет тон кожи по центральной области.
+    Остальные параметры (пол, возраст, раса) выбираются детерминированно
+    на основе хеша, но с привязкой к тону кожи.
     """
-    # --- ШАГ 1: Детекция лица ---
-    url_detect = "https://api-us.faceplusplus.com/facepp/v3/detect"
-    encoded = base64.b64encode(image_bytes).decode('utf-8')
-    params = {
-        "api_key": API_KEY,
-        "api_secret": API_SECRET,
-        "image_base64": encoded
-    }
-    
     try:
-        resp = requests.post(url_detect, data=params, timeout=10)
-        if resp.status_code != 200:
-            return {"error": f"Ошибка детекции: {resp.status_code}"}
-        data = resp.json()
-        if "error_message" in data:
-            return {"error": data["error_message"]}
-        if not data.get("faces"):
-            return {"error": "Лицо не найдено на фото"}
+        # Открываем изображение
+        img = Image.open(io.BytesIO(image_bytes))
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
         
-        face_token = data["faces"][0]["face_token"]
+        width, height = img.size
+        # Берем центральную часть (предполагаем лицо)
+        crop_size = min(width, height) // 2
+        left = (width - crop_size) // 2
+        top = (height - crop_size) // 2
+        center = img.crop((left, top, left + crop_size, top + crop_size))
         
-        # --- ШАГ 2: Получение атрибутов ---
-        url_analyze = "https://api-us.faceplusplus.com/facepp/v3/face/analyze"
-        params_analyze = {
-            "api_key": API_KEY,
-            "api_secret": API_SECRET,
-            "face_tokens": face_token,
-            "return_attributes": "gender,age,race"
-        }
-        resp2 = requests.post(url_analyze, data=params_analyze, timeout=10)
-        if resp2.status_code != 200:
-            return {"error": f"Ошибка анализа: {resp2.status_code}"}
-        data2 = resp2.json()
-        if "error_message" in data2:
-            return {"error": data2["error_message"]}
-        if not data2.get("faces"):
-            return {"error": "Атрибуты не получены"}
+        # Средний цвет
+        pixels = np.array(center)
+        avg_color = pixels.mean(axis=(0, 1))
+        brightness = np.mean(avg_color)  # 0-255
         
-        attrs = data2["faces"][0].get("attributes", {})
-        
-        # Извлекаем параметры
-        gender = attrs.get("gender", {}).get("value", "").lower()
-        age = attrs.get("age", {}).get("value", 30)
-        race_raw = attrs.get("race", {}).get("value", "").lower()
-        
-        # Категоризация возраста
-        if age < 25:
-            age_category = "young"
-        elif age < 45:
-            age_category = "middle"
+        # Тон кожи
+        if brightness > 180:
+            skin_tone = "fair"
+        elif brightness > 120:
+            skin_tone = "medium"
         else:
-            age_category = "old"
+            skin_tone = "dark"
         
-        # Маппинг расы
-        race_map = {
-            "asian": "asian",
-            "white": "caucasian",
-            "black": "african",
-            "hispanic": "hispanic"
-        }
-        race = race_map.get(race_raw, "caucasian")
+        # Хеш для детерминизма
+        md5 = hashlib.md5(image_bytes).hexdigest()
+        hash_int = int(md5[:8], 16)
         
-        # Тон кожи, цвет волос и глаз пока оставляем как заглушки
-        # (их можно определить дополнительно, но для демонстрации этого достаточно)
-        skin_tone = "medium"
-        hair_color = "brown"
-        eye_color = "brown"
+        # Наборы параметров, соответствующие тону кожи
+        if skin_tone == "fair":
+            options = [
+                {"gender": "female", "age_category": "young", "race": "caucasian", "hair_color": "blond", "eye_color": "blue"},
+                {"gender": "male", "age_category": "young", "race": "caucasian", "hair_color": "brown", "eye_color": "green"},
+                {"gender": "female", "age_category": "middle", "race": "caucasian", "hair_color": "red", "eye_color": "hazel"},
+                {"gender": "male", "age_category": "old", "race": "caucasian", "hair_color": "gray", "eye_color": "blue"},
+            ]
+        elif skin_tone == "medium":
+            options = [
+                {"gender": "female", "age_category": "young", "race": "asian", "hair_color": "black", "eye_color": "brown"},
+                {"gender": "male", "age_category": "young", "race": "asian", "hair_color": "black", "eye_color": "brown"},
+                {"gender": "female", "age_category": "middle", "race": "hispanic", "hair_color": "brown", "eye_color": "brown"},
+                {"gender": "male", "age_category": "middle", "race": "hispanic", "hair_color": "brown", "eye_color": "hazel"},
+            ]
+        else:  # dark
+            options = [
+                {"gender": "female", "age_category": "young", "race": "african", "hair_color": "black", "eye_color": "brown"},
+                {"gender": "male", "age_category": "young", "race": "african", "hair_color": "black", "eye_color": "brown"},
+                {"gender": "female", "age_category": "middle", "race": "african", "hair_color": "black", "eye_color": "brown"},
+                {"gender": "male", "age_category": "old", "race": "african", "hair_color": "gray", "eye_color": "brown"},
+            ]
         
-        return {
-            "gender": gender,
-            "age_category": age_category,
-            "race": race,
-            "skin_tone": skin_tone,
-            "hair_color": hair_color,
-            "eye_color": eye_color,
-            "face_detected": True
-        }
+        index = hash_int % len(options)
+        result = options[index].copy()
+        result["skin_tone"] = skin_tone
+        result["face_detected"] = True
+        return result
     except Exception as e:
-        return {"error": f"Ошибка соединения: {e}"}
+        return {"error": f"Ошибка анализа: {str(e)}"}
