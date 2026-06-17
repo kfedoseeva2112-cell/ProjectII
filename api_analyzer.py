@@ -1,39 +1,45 @@
 import requests
-import base64
+import streamlit as st
 
-# --- ВАШИ КЛЮЧИ (вставлены) ---
+# --- ВАШИ КЛЮЧИ ---
 API_KEY = "TJnymPukGSYQIAi_lS3VOtpplaezJEto"
 API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в Face++ API и возвращает словарь с параметрами.
+    Отправляет фото в Face++ через multipart/form-data.
     """
     url = "https://api-us.faceplusplus.com/facepp/v3/detect"
     
-    # Кодируем фото в base64
-    encoded = base64.b64encode(image_bytes).decode('utf-8')
-    
-    params = {
+    # Отправляем файл как есть
+    files = {
+        "image_file": ("photo.jpg", image_bytes, "image/jpeg")
+    }
+    data = {
         "api_key": API_KEY,
         "api_secret": API_SECRET,
-        "image_base64": encoded,
         "return_attributes": "gender,age,race"
     }
     
     try:
-        response = requests.post(url, data=params, timeout=15)
+        response = requests.post(url, files=files, data=data, timeout=15)
+        
+        # --- ДЛЯ ОТЛАДКИ: выводим статус и текст ответа ---
+        print(f"Status: {response.status_code}")
+        print(f"Response: {response.text}")
+        
         if response.status_code != 200:
-            return {"error": f"API ошибка: {response.status_code}"}
+            return {"error": f"API ошибка: {response.status_code} - {response.text}"}
         
-        data = response.json()
-        if "error_message" in data:
-            return {"error": data["error_message"]}
+        result = response.json()
+        if "error_message" in result:
+            return {"error": result["error_message"]}
         
-        if not data.get("faces"):
+        faces = result.get("faces")
+        if not faces:
             return {"error": "Лицо не найдено на фото. Попробуйте другое фото."}
         
-        face = data["faces"][0]
+        face = faces[0]
         attrs = face.get("attributes", {})
         
         # Извлекаем параметры
@@ -58,8 +64,7 @@ def analyze_face(image_bytes):
         }
         race = race_map.get(race_raw, "caucasian")
         
-        # Для тона кожи, волос и глаз – используем фиксированные заглушки
-        # (их определение требует дополнительных моделей, но для демонстрации сойдёт)
+        # Для остальных параметров используем заглушки (или можно определить дополнительно)
         skin_tone = "medium"
         hair_color = "brown"
         eye_color = "brown"
