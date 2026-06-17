@@ -93,11 +93,20 @@ with col2:
                     st.error(f"❌ {features['error']}")
                     st.info("Пожалуйста, введите параметры вручную ниже.")
                 else:
-                    st.success("✅ Параметры распознаны!")
-                    st.session_state.features = features
-                    st.session_state.auto_detected = True
-                    st.json(features)
+                   st.success("✅ Параметры распознаны! Нажмите кнопку ниже, чтобы получить образ.")
+st.session_state.features = features
+st.session_state.auto_detected = True
 
+# Показываем распознанные параметры красиво (без JSON)
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown(f"**Пол:** {gender_map.get(features.get('gender', 'неизвестно'), 'неизвестно')}")
+    st.markdown(f"**Тон кожи:** {skin_map.get(features.get('skin_tone', 'неизвестно'), 'неизвестно')}")
+    st.markdown(f"**Цвет волос:** {hair_map.get(features.get('hair_color', 'неизвестно'), 'неизвестно')}")
+with col2:
+    st.markdown(f"**Возраст:** {age_map.get(features.get('age_category', 'неизвестно'), 'неизвестно')}")
+    st.markdown(f"**Цвет глаз:** {eyes_map.get(features.get('eye_color', 'неизвестно'), 'неизвестно')}")
+    st.markdown(f"**Раса:** {race_map.get(features.get('race', 'неизвестно'), 'неизвестно')}")
 # --- Ручной ввод (всегда доступен) ---
 st.markdown("---")
 st.subheader("✏️ Параметры внешности (введите сами, если автоматика не сработала)")
