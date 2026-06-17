@@ -2,5 +2,4 @@ streamlit
 pillow
 numpy
 opencv-python-headless
-face_recognition
 deepface
