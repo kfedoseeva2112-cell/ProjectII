@@ -5,31 +5,26 @@ import io
 
 def analyze_face(image_bytes):
     """
-    Анализирует фото: определяет тон кожи, пол, возраст, расу и другие параметры
-    на основе хеша и среднего цвета. Без внешних запросов.
+    Определяет параметры на основе хеша и среднего цвета фото.
+    Без внешних вызовов.
     """
     try:
-        # Открываем изображение
+        # Открываем изображение и определяем яркость центральной области
         img = Image.open(io.BytesIO(image_bytes))
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
         width, height = img.size
-        # Берем центральную часть (предполагаем лицо)
         crop_size = min(width, height) // 2
         left = (width - crop_size) // 2
         top = (height - crop_size) // 2
         center = img.crop((left, top, left + crop_size, top + crop_size))
-        
-        # Средний цвет
         pixels = np.array(center)
-        avg_color = pixels.mean(axis=(0, 1))
-        brightness = np.mean(avg_color)  # 0-255
+        avg_brightness = np.mean(pixels)
         
-        # Тон кожи
-        if brightness > 180:
+        if avg_brightness > 180:
             skin_tone = "fair"
-        elif brightness > 120:
+        elif avg_brightness > 120:
             skin_tone = "medium"
         else:
             skin_tone = "dark"
@@ -38,7 +33,7 @@ def analyze_face(image_bytes):
         md5 = hashlib.md5(image_bytes).hexdigest()
         hash_int = int(md5[:8], 16)
         
-        # Наборы параметров, соответствующие тону кожи
+        # Наборы параметров в зависимости от тона кожи
         if skin_tone == "fair":
             options = [
                 {"gender": "female", "age_category": "young", "race": "caucasian", "hair_color": "blond", "eye_color": "blue"},
