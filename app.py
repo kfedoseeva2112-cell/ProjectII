@@ -1,8 +1,41 @@
 import streamlit as st
 from PIL import Image
-from api_analyzer import analyze_face
-from matcher import get_recommendations
+import random
 
+# --- ЗАГЛУШКА ДЛЯ API (имитация распознавания) ---
+def analyze_face(image_bytes):
+    # Имитация работы AI – возвращает случайные параметры
+    genders = ["female", "male"]
+    ages = ["young", "middle", "old"]
+    races = ["caucasian", "asian", "african", "hispanic"]
+    skin_tones = ["fair", "medium", "dark"]
+    hair_colors = ["blond", "brown", "black", "red", "gray"]
+    eye_colors = ["blue", "green", "brown", "hazel"]
+    return {
+        "gender": random.choice(genders),
+        "age_category": random.choice(ages),
+        "race": random.choice(races),
+        "skin_tone": random.choice(skin_tones),
+        "hair_color": random.choice(hair_colors),
+        "eye_color": random.choice(eye_colors),
+        "face_detected": True
+    }
+
+# --- ИМПОРТ matcher (если есть) ---
+try:
+    from matcher import get_recommendations
+except ImportError:
+    # Если matcher нет – создаём заглушку
+    def get_recommendations(features, occasion):
+        return {
+            "одежда": ["Классический пиджак", "Брюки нейтрального цвета", "Простая блуза"],
+            "цвета": ["Серый", "Синий", "Белый"],
+            "аксессуары": ["Кожаный ремень", "Сумка-шопер"],
+            "makeup": ["Естественный макияж"],
+            "style_tip": "Базовый универсальный образ."
+        }
+
+# --- НАСТРОЙКИ СТРАНИЦЫ ---
 st.set_page_config(
     page_title="StyleMate Pro",
     page_icon="🎨",
@@ -10,7 +43,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ------------------- СВЕТЛЫЙ ПРЕМИУМ CSS С ФОНОВЫМИ ЭЛЕМЕНТАМИ -------------------
+# --- ФОНОВЫЕ МОДНЫЕ ИКОНКИ (добавляем сразу) ---
+st.markdown("""
+<div class="fashion-icons">
+    <span>💄</span>
+    <span>👗</span>
+    <span>👠</span>
+    <span>🧥</span>
+    <span>👜</span>
+    <span>✂️</span>
+</div>
+""", unsafe_allow_html=True)
+
+# ------------------- ПРЕМИУМ CSS (светлый) -------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
@@ -23,11 +68,11 @@ st.markdown("""
         padding: 0;
     }
 
-    /* Светлый градиентный фон */
     .stApp {
         background: transparent !important;
     }
 
+    /* Светлый градиентный фон */
     body::before {
         content: '';
         position: fixed;
@@ -152,6 +197,41 @@ st.markdown("""
         0% { transform: translateY(0) rotate(0deg) scale(1); }
         33% { transform: translateY(-30px) rotate(120deg) scale(1.1); }
         66% { transform: translateY(30px) rotate(240deg) scale(0.9); }
+        100% { transform: translateY(0) rotate(360deg) scale(1); }
+    }
+
+    /* Модные иконки на фоне */
+    .fashion-icons {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 0.12;
+        font-size: 80px;
+        color: rgba(102, 126, 234, 0.3);
+    }
+
+    .fashion-icons span {
+        position: absolute;
+        animation: floatIcon 30s linear infinite;
+        display: block;
+    }
+
+    .fashion-icons span:nth-child(1) { top: 10%; left: 5%; animation-duration: 28s; animation-delay: 0s; font-size: 100px; }
+    .fashion-icons span:nth-child(2) { top: 20%; right: 8%; animation-duration: 32s; animation-delay: 5s; font-size: 70px; }
+    .fashion-icons span:nth-child(3) { bottom: 15%; left: 10%; animation-duration: 30s; animation-delay: 10s; font-size: 90px; }
+    .fashion-icons span:nth-child(4) { bottom: 30%; right: 5%; animation-duration: 35s; animation-delay: 3s; font-size: 60px; }
+    .fashion-icons span:nth-child(5) { top: 50%; left: 3%; animation-duration: 26s; animation-delay: 7s; font-size: 80px; }
+    .fashion-icons span:nth-child(6) { top: 5%; left: 50%; animation-duration: 33s; animation-delay: 12s; font-size: 120px; }
+
+    @keyframes floatIcon {
+        0% { transform: translateY(0) rotate(0deg) scale(1); }
+        33% { transform: translateY(-20px) rotate(120deg) scale(1.2); }
+        66% { transform: translateY(20px) rotate(240deg) scale(0.8); }
         100% { transform: translateY(0) rotate(360deg) scale(1); }
     }
 
@@ -554,11 +634,12 @@ st.markdown("""
         .step-item { flex-direction: row; gap: 0.8rem; justify-content: flex-start; }
         .step-circle { width: 36px; height: 36px; font-size: 0.8rem; }
         .step-progress::before { display: none; }
+        .fashion-icons { opacity: 0.06; }
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ (остаются, но теперь светлые) -------------------
+# ------------------- ФОНОВЫЕ ЭЛЕМЕНТЫ (сетка и фигуры) -------------------
 st.markdown("""
 <div class="grid-overlay"></div>
 <div class="floating-shapes">
@@ -696,8 +777,9 @@ if st.button("✨ Создать идеальный образ", type="primary",
     st.session_state.features_full = features_full
     st.rerun()
 
-# ------------------- ВЫВОД РЕЗУЛЬТАТА -------------------
+# ------------------- ВЫВОД РЕЗУЛЬТАТА (ИЛИ ЗАГЛУШКИ) -------------------
 if "recommendations" in st.session_state:
+    # --- ПОКАЗЫВАЕМ РЕАЛЬНЫЕ РЕКОМЕНДАЦИИ ---
     rec = st.session_state.recommendations
     features_full = st.session_state.features_full
 
@@ -707,10 +789,9 @@ if "recommendations" in st.session_state:
     # Бейдж цветотипа
     season_emoji = {"spring": "🌸", "summer": "☀️", "autumn": "🍂", "winter": "❄️"}
     st.markdown(f"<div style='display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem;'>"
-                f"<span class='season-badge'>{season_emoji.get(color_type, '')} {color_type_map.get(color_type, '')}</span>"
+                f"<span class='season-badge'>{season_emoji.get(features_full['color_type'], '')} {color_type_map.get(features_full['color_type'], '')}</span>"
                 f"</div>", unsafe_allow_html=True)
 
-    # Сетка рекомендаций
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -805,6 +886,48 @@ if "recommendations" in st.session_state:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+else:
+    # --- ЗАГЛУШКИ: показываем стильные карточки-советы (заполняем пустые плашки) ---
+    st.markdown('<div class="glass-card fade-in">', unsafe_allow_html=True)
+    st.markdown("#### 💡 Ваш будущий образ")
+    st.markdown("_Заполните параметры и нажмите «Создать идеальный образ», чтобы получить персональные рекомендации._")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("""
+        <div class="rec-card" style="border-left-color: #f6ad55;">
+            <h4>👗 Совет дня</h4>
+            <ul>
+                <li>Носите то, что подчеркивает вашу индивидуальность</li>
+                <li>Качественные базовые вещи – основа гардероба</li>
+                <li>Одна яркая деталь может преобразить всё</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown("""
+        <div class="rec-card" style="border-left-color: #4facfe;">
+            <h4>🎨 Цветовая гармония</h4>
+            <ul>
+                <li>Подбирайте оттенки под свой цветотип</li>
+                <li>Контрастные акценты делают образ ярче</li>
+                <li>Используйте правило 60-30-10</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown("""
+        <div class="rec-card" style="border-left-color: #43e97b;">
+            <h4>💡 Аксессуары</h4>
+            <ul>
+                <li>Один яркий аксессуар – и образ заиграет</li>
+                <li>Следуйте правилу «меньше – значит больше»</li>
+                <li>Учитывайте форму лица при выборе серёг</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # ------------------- ПОДВАЛ -------------------
 st.markdown("---")
 with st.expander("ℹ️ Как это работает"):
@@ -813,7 +936,7 @@ with st.expander("ℹ️ Как это работает"):
     Вы загружаете фото, система определяет параметры внешности, а затем на основе ваших данных и выбранного мероприятия подбирает идеальный образ.
 
     **Технологии:**
-    - Распознавание лиц: DeepFace (локально)
+    - Распознавание лиц: DeepFace (локально) – в демо-версии используется имитация
     - База стилистических правил: более 40 комбинаций
     - Интерфейс: Streamlit с кастомным CSS
     """)
