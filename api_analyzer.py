@@ -1,78 +1,57 @@
-import requests
-
-# --- ВАШИ КЛЮЧИ ---
-API_KEY = "TJnymPukGSYQIAi_lS3VOtpplaezJEto"
-API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
+import cv2
+import numpy as np
+from deepface import DeepFace
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в Face++ и возвращает параметры.
+    Анализирует фото через DeepFace (локально, без внешних ключей).
+    Возвращает словарь с параметрами: пол, возраст, раса.
     """
-    url = "https://api-us.faceplusplus.com/facepp/v3/detect"
-    
-    # Параметры запроса (передаём в URL)
-    params = {
-        "api_key": API_KEY,
-        "api_secret": API_SECRET,
-        "return_attributes": "gender,age,race"
-    }
-    
-    # Файл отправляем как multipart
-    files = {
-        "image_file": ("photo.jpg", image_bytes, "image/jpeg")
-    }
-    
     try:
-        response = requests.post(url, params=params, files=files, timeout=15)
-        if response.status_code != 200:
-            return {"error": f"API ошибка: {response.status_code} - {response.text}"}
+        # Преобразуем байты в изображение OpenCV
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if img is None:
+            return {"error": "Не удалось прочитать изображение"}
+
+        # Анализ через DeepFace (определяет пол, возраст, расу)
+        analysis = DeepFace.analyze(img, actions=['age', 'gender', 'race'], enforce_detection=False)
         
-        result = response.json()
-        if "error_message" in result:
-            return {"error": result["error_message"]}
-        
-        faces = result.get("faces")
-        if not faces:
-            return {"error": "Лицо не найдено на фото. Попробуйте другое фото."}
-        
-        face = faces[0]
-        attrs = face.get("attributes", {})
-        
-        # Извлекаем параметры
-        gender = attrs.get("gender", {}).get("value", "").lower()
-        age = attrs.get("age", {}).get("value", 30)
-        race_raw = attrs.get("race", {}).get("value", "").lower()
-        
-        # Категоризируем возраст
-        if age < 25:
-            age_category = "young"
-        elif age < 45:
-            age_category = "middle"
+        # Берём первый результат (если несколько лиц – берём первое)
+        result = analysis[0] if isinstance(analysis, list) else analysis
+
+        # Извлекаем пол (DeepFace возвращает словарь {'Man': %, 'Woman': %})
+        gender_dict = result.get('gender', {})
+        if gender_dict:
+            gender = max(gender_dict, key=gender_dict.get).lower()
         else:
-            age_category = "old"
-        
-        # Маппинг расы
-        race_map = {
-            "asian": "asian",
-            "white": "caucasian",
-            "black": "african",
-            "hispanic": "hispanic"
-        }
-        race = race_map.get(race_raw, "caucasian")
-        
-        # Для остальных параметров используем заглушки (можно доработать)
-        skin_tone = "medium"
-        hair_color = "brown"
-        eye_color = "brown"
-        
+            gender = 'unknown'
+
+        # Возраст
+        age = result.get('age', 30)
+        if age < 25:
+            age_category = 'young'
+        elif age < 45:
+            age_category = 'middle'
+        else:
+            age_category = 'old'
+
+        # Раса
+        race_dict = result.get('race', {})
+        if race_dict:
+            race = max(race_dict, key=race_dict.get).lower()
+        else:
+            race = 'caucasian'
+
+        # Остальные параметры – заглушки (их можно доработать отдельно)
         return {
             "gender": gender,
             "age_category": age_category,
             "race": race,
-            "skin_tone": skin_tone,
-            "hair_color": hair_color,
-            "eye_color": eye_color,
+            "skin_tone": "medium",
+            "hair_color": "brown",
+            "eye_color": "brown",
             "face_detected": True
         }
     except Exception as e:
-        return {"error": f"Ошибка соединения: {e}"}
+        return {"error": f"Ошибка анализа: {str(e)}"}
