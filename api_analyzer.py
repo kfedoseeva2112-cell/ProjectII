@@ -1,14 +1,13 @@
 import requests
-import streamlit as st
 import base64
 
-# --- ВАШИ КЛЮЧИ (уже вставлены) ---
+# --- ВАШИ КЛЮЧИ (вставлены) ---
 API_KEY = "TJnymPukGSYQIAi_lS3VOtpplaezJEto"
 API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в Face++ API и возвращает параметры внешности.
+    Отправляет фото в Face++ API и возвращает словарь с параметрами.
     """
     url = "https://api-us.faceplusplus.com/facepp/v3/detect"
     
@@ -19,7 +18,7 @@ def analyze_face(image_bytes):
         "api_key": API_KEY,
         "api_secret": API_SECRET,
         "image_base64": encoded,
-        "return_attributes": "gender,age,race,emotion"
+        "return_attributes": "gender,age,race"
     }
     
     try:
@@ -40,7 +39,7 @@ def analyze_face(image_bytes):
         # Извлекаем параметры
         gender = attrs.get("gender", {}).get("value", "").lower()
         age = attrs.get("age", {}).get("value", 30)
-        race = attrs.get("race", {}).get("value", "").lower()
+        race_raw = attrs.get("race", {}).get("value", "").lower()
         
         # Категоризируем возраст
         if age < 25:
@@ -50,17 +49,17 @@ def analyze_face(image_bytes):
         else:
             age_category = "old"
         
-        # Маппинг расы (Face++ возвращает свои названия)
+        # Маппинг расы
         race_map = {
             "asian": "asian",
             "white": "caucasian",
             "black": "african",
             "hispanic": "hispanic"
         }
-        race = race_map.get(race, "caucasian")
+        race = race_map.get(race_raw, "caucasian")
         
-        # Для тона кожи, цвета волос и глаз используем приблизительные значения
-        # (их сложно определить по одному фото без дополнительных моделей)
+        # Для тона кожи, волос и глаз – используем фиксированные заглушки
+        # (их определение требует дополнительных моделей, но для демонстрации сойдёт)
         skin_tone = "medium"
         hair_color = "brown"
         eye_color = "brown"
