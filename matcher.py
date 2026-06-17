@@ -16,6 +16,10 @@ def load_rules():
     return []
 
 def get_recommendations(features, occasion):
+    """
+    features: словарь с параметрами (gender, skin_tone, hair_color, eye_color, race, age_category, color_type, face_shape, body_type)
+    occasion: строка с мероприятием
+    """
     rules = load_rules()
     if not rules:
         return {
@@ -25,32 +29,38 @@ def get_recommendations(features, occasion):
             "makeup": ["Естественный макияж"],
             "style_tip": "Базовый универсальный образ."
         }
-    
-    # Ищем правило, где совпадают: пол, цвет кожи, возраст, раса И МЕРОПРИЯТИЕ
+
+    # Приоритет: сначала ищем точное совпадение всех полей (включая colour_type, face_shape, body_type)
     for rule in rules:
         match = True
         for key, value in rule.items():
             if key == "рекомендации":
                 continue
-            # Сравниваем только те поля, которые есть в features
             if key in features:
                 if features[key] != value:
                     match = False
                     break
-            # Если в правиле есть поле "occasion", оно должно совпадать
+            # также проверяем occasion
             if key == "occasion":
                 if value != occasion:
                     match = False
                     break
         if match:
             return rule.get("рекомендации", {})
-    
-    # Если точного совпадения нет, ищем только по полу и мероприятию
+
+    # Если точного нет – ищем по полу, цветотипу и мероприятию
     for rule in rules:
-        if rule.get("gender") == features["gender"] and rule.get("occasion") == occasion:
+        if (rule.get("gender") == features.get("gender") and
+            rule.get("color_type") == features.get("color_type") and
+            rule.get("occasion") == occasion):
             return rule.get("рекомендации", {})
-    
-    # Совсем ничего не нашли — возвращаем дефолт
+
+    # Если и такого нет – ищем только по полу и мероприятию
+    for rule in rules:
+        if rule.get("gender") == features.get("gender") and rule.get("occasion") == occasion:
+            return rule.get("рекомендации", {})
+
+    # Совсем ничего – возвращаем базовый набор
     return {
         "одежда": ["Универсальный комплект", "Базовая вещь", "Аксессуар"],
         "цвета": ["Нейтральные", "Пастельные"],
