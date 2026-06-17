@@ -17,6 +17,7 @@ def analyze_face(image_bytes):
     payload = {"photo": encoded}
     
     response = requests.post(url, json=payload, headers=headers)
+    print(response.text)
     if response.status_code != 200:
         return {"error": "Не удалось распознать лицо"}
     
