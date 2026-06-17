@@ -1,3 +1,4 @@
+from PIL import Image
 import streamlit as st
 from matcher import get_recommendations
 
