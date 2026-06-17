@@ -3,7 +3,7 @@ import base64
 from PIL import Image
 import io
 
-API_KEY = ea3b7153b5a3422e84452581fd4ac5b7  # Замените на реальный ключ
+API_KEY = "ea3b7153b5a3422e84452581fd4ac5b7" # Замените на реальный ключ
 
 def analyze_face(image_bytes):
     """
