@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ------------------- CSS (полный, премиум-светлый) -------------------
+# ------------------- CSS (премиум-светлый, полный) -------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
@@ -633,27 +633,46 @@ color_type_map = {"spring": "🌸 Весна", "summer": "☀️ Лето", "aut
 face_shape_map = {"oval": "🥚 Овал", "round": "⭕ Круг", "square": "⬛ Квадрат", "triangle": "🔻 Треугольник", "diamond": "💎 Ромб"}
 body_type_map = {"hourglass": "⌛ Песочные часы", "pear": "🍐 Груша", "apple": "🍎 Яблоко", "rectangle": "📏 Прямоугольник"}
 
+# ------------------- ИНИЦИАЛИЗАЦИЯ СЕССИИ -------------------
+if "current_file" not in st.session_state:
+    st.session_state.current_file = None
+if "features" not in st.session_state:
+    st.session_state.features = {}
+if "auto_detected" not in st.session_state:
+    st.session_state.auto_detected = False
+if "recommendations" not in st.session_state:
+    st.session_state.recommendations = None
+if "features_full" not in st.session_state:
+    st.session_state.features_full = {}
+
 # ------------------- ЗАГРУЗКА ФОТО -------------------
 st.markdown("#### 📸 Шаг 1. Загрузите ваше фото")
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
-# --- СБРОС ПАРАМЕТРОВ ПРИ ЗАГРУЗКЕ НОВОГО ФОТО ---
+# --- ОБРАБОТКА ЗАГРУЗКИ НОВОГО ФОТО ---
 if uploaded_file is not None:
-    if "prev_file" not in st.session_state or st.session_state.prev_file != uploaded_file.name:
+    # Если загружен новый файл (имя отличается от сохранённого)
+    if st.session_state.current_file != uploaded_file.name:
+        # Полностью сбрасываем все данные, связанные с предыдущим анализом
         st.session_state.features = {}
         st.session_state.auto_detected = False
-        st.session_state.prev_file = uploaded_file.name
+        st.session_state.recommendations = None
+        st.session_state.features_full = {}
+        st.session_state.current_file = uploaded_file.name
         st.rerun()
 
+    # Отображаем фото
     image = Image.open(uploaded_file)
     st.image(image, caption="Ваше фото", use_column_width=True)
 
+    # Кнопка распознавания
     if st.button("🔍 Распознать параметры по фото", type="primary"):
         with st.spinner("Анализируем фото..."):
             bytes_data = uploaded_file.getvalue()
             features = analyze_face(bytes_data)
             if "error" in features:
                 st.error(f"❌ {features['error']}")
+                # Сбрасываем при ошибке
                 st.session_state.features = {}
                 st.session_state.auto_detected = False
             else:
@@ -661,11 +680,20 @@ if uploaded_file is not None:
                 st.session_state.features = features
                 st.session_state.auto_detected = True
                 st.rerun()
+else:
+    # Если файл не загружен, сбрасываем всё, но сохраняем current_file = None
+    if st.session_state.current_file is not None:
+        st.session_state.current_file = None
+        st.session_state.features = {}
+        st.session_state.auto_detected = False
+        st.session_state.recommendations = None
+        st.session_state.features_full = {}
 
 # ------------------- РУЧНОЙ ВВОД ПАРАМЕТРОВ -------------------
 st.markdown("#### ✏️ Шаг 2. Уточните параметры внешности")
 st.markdown("_Чем точнее вы заполните, тем лучше будет результат._")
 
+# Значения по умолчанию – из распознанных (если есть) или из стандартных
 default_gender = st.session_state.get("features", {}).get("gender", "female")
 default_skin = st.session_state.get("features", {}).get("skin_tone", "fair")
 default_hair = st.session_state.get("features", {}).get("hair_color", "blond")
@@ -724,8 +752,8 @@ if st.button("✨ Создать идеальный образ", type="primary",
     st.session_state.features_full = features_full
     st.rerun()
 
-# ------------------- ВЫВОД РЕЗУЛЬТАТА (КРАСИВЫЙ) -------------------
-if "recommendations" in st.session_state:
+# ------------------- ВЫВОД РЕЗУЛЬТАТА (только если рекомендации соответствуют текущему файлу) -------------------
+if st.session_state.recommendations is not None and st.session_state.current_file is not None:
     rec = st.session_state.recommendations
     features_full = st.session_state.features_full
 
