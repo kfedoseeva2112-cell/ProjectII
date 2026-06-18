@@ -5,30 +5,23 @@ import io
 
 def analyze_face(image_bytes):
     """
-    Анализирует фото: определяет тон кожи и подбирает детерминированные параметры
-    на основе хеша и тона кожи. Это локальный модуль, который можно заменить
-    на любой внешний API (Face++, SkyBiometry, свою нейросеть) без изменения
-    остального кода.
+    Анализирует фото: определяет тон кожи по центральной области.
+    Пол, возраст, раса, цвет волос, глаз выбираются детерминированно на основе хеша.
     """
     try:
-        # Открываем изображение
         img = Image.open(io.BytesIO(image_bytes))
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        # Берём центральную область для определения тона кожи
         width, height = img.size
         crop_size = min(width, height) // 2
         left = (width - crop_size) // 2
         top = (height - crop_size) // 2
         center = img.crop((left, top, left + crop_size, top + crop_size))
-        
-        # Средний цвет
         pixels = np.array(center)
         avg_color = pixels.mean(axis=(0, 1))
-        brightness = np.mean(avg_color)  # 0-255
+        brightness = np.mean(avg_color)
         
-        # Тон кожи
         if brightness > 180:
             skin_tone = "fair"
         elif brightness > 120:
@@ -36,11 +29,9 @@ def analyze_face(image_bytes):
         else:
             skin_tone = "dark"
         
-        # Хеш для детерминизма
         md5 = hashlib.md5(image_bytes).hexdigest()
         hash_int = int(md5[:8], 16)
         
-        # Наборы параметров в зависимости от тона кожи
         if skin_tone == "fair":
             options = [
                 {"gender": "female", "age_category": "young", "race": "caucasian", "hair_color": "blond", "eye_color": "blue"},
