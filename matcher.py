@@ -26,7 +26,7 @@ def get_recommendations(features, occasion):
             "style_tip": "Базовый универсальный образ."
         }
 
-    # Поиск точного совпадения
+    # Ищем точное совпадение всех полей
     for rule in rules:
         match = True
         for key, value in rule.items():
@@ -41,31 +41,21 @@ def get_recommendations(features, occasion):
                     match = False
                     break
         if match:
-            recommendations = rule.get("рекомендации", {})
-            # Гарантируем наличие makeup
-            if "makeup" not in recommendations or not recommendations["makeup"]:
-                recommendations["makeup"] = ["Естественный макияж"]
-            return recommendations
+            return rule.get("рекомендации", {})
 
-    # Поиск по полу + цветотипу + мероприятию
+    # Ищем по полу + цветотипу + мероприятию
     for rule in rules:
         if (rule.get("gender") == features.get("gender") and
             rule.get("color_type") == features.get("color_type") and
             rule.get("occasion") == occasion):
-            recommendations = rule.get("рекомендации", {})
-            if "makeup" not in recommendations or not recommendations["makeup"]:
-                recommendations["makeup"] = ["Естественный макияж"]
-            return recommendations
+            return rule.get("рекомендации", {})
 
-    # Поиск по полу + мероприятию
+    # Ищем по полу + мероприятию
     for rule in rules:
         if rule.get("gender") == features.get("gender") and rule.get("occasion") == occasion:
-            recommendations = rule.get("рекомендации", {})
-            if "makeup" not in recommendations or not recommendations["makeup"]:
-                recommendations["makeup"] = ["Естественный макияж"]
-            return recommendations
+            return rule.get("рекомендации", {})
 
-    # Дефолтный ответ с гарантированным makeup
+    # Дефолт
     return {
         "одежда": ["Универсальный комплект", "Базовая вещь", "Аксессуар"],
         "цвета": ["Нейтральные", "Пастельные"],
