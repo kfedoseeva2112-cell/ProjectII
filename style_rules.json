@@ -15,7 +15,7 @@
       "цвета": ["Лавандовый", "Серый", "Белый"],
       "аксессуары": ["Жемчужные серьги", "Сумка-тоут"],
       "makeup": ["Нюдовый макияж", "Помада розовая"],
-      "style_tip": "Элегантный офисный look – делайте ставку на пастельные тона и качественные ткани."
+      "style_tip": "Элегантный офисный look – делайте ставку на пастельные тона."
     }
   },
   {
@@ -34,7 +34,7 @@
       "цвета": ["Терракотовый", "Золотистый", "Оливковый"],
       "аксессуары": ["Длинные серьги", "Клатч"],
       "makeup": ["Помада коралловая", "Стрелки"],
-      "style_tip": "Романтичный и уверенный образ – подчеркните линию декольте и талию."
+      "style_tip": "Романтичный и уверенный образ – подчеркните линию декольте."
     }
   },
   {
@@ -53,7 +53,7 @@
       "цвета": ["Черный", "Золото", "Белый"],
       "аксессуары": ["Цепочка", "Наручные часы"],
       "makeup": [],
-      "style_tip": "Яркий вечерний образ – не бойтесь экспериментировать с текстурами."
+      "style_tip": "Яркий вечерний образ – не бойтесь экспериментировать."
     }
   },
   {
@@ -76,82 +76,6 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "brown",
-    "race": "asian",
-    "age_category": "middle",
-    "color_type": "autumn",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Деловая встреча",
-    "рекомендации": {
-      "одежда": ["Костюм-тройка", "Рубашка", "Галстук", "Оксфорды"],
-      "цвета": ["Темно-синий", "Бордовый", "Бежевый"],
-      "аксессуары": ["Кожаный портфель", "Запонки"],
-      "makeup": [],
-      "style_tip": "Уверенный и статусный образ для переговоров."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "young",
-    "color_type": "winter",
-    "face_shape": "round",
-    "body_type": "pear",
-    "occasion": "Спорт",
-    "рекомендации": {
-      "одежда": ["Леггинсы", "Топ", "Кроссовки"],
-      "цвета": ["Черный", "Неоновый розовый", "Белый"],
-      "аксессуары": ["Фитнес-браслет", "Спортивная сумка"],
-      "makeup": ["Водостойкая тушь", "Бальзам SPF"],
-      "style_tip": "Динамичный образ для тренировок – комфорт и стиль."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "hazel",
-    "race": "hispanic",
-    "age_category": "middle",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "apple",
-    "occasion": "Свадьба",
-    "рекомендации": {
-      "одежда": ["Вечернее платье в пол", "Болеро", "Туфли на каблуке"],
-      "цвета": ["Сиреневый", "Серебро", "Жемчуг"],
-      "аксессуары": ["Длинные серьги", "Клатч"],
-      "makeup": ["Smoky eyes", "Помада ягодная"],
-      "style_tip": "Шикарный вечерний образ для торжества."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "blond",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "young",
-    "color_type": "spring",
-    "face_shape": "square",
-    "body_type": "rectangle",
-    "occasion": "Отдых",
-    "рекомендации": {
-      "одежда": ["Шорты", "Рубашка-поло", "Сланцы"],
-      "цвета": ["Голубой", "Белый", "Желтый"],
-      "аксессуары": ["Солнечные очки", "Панама"],
-      "makeup": [],
-      "style_tip": "Лёгкий пляжный образ – отдыхайте с комфортом."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "fair",
     "hair_color": "blond",
@@ -168,25 +92,6 @@
       "аксессуары": ["Чокер", "Сумка-полумесяц"],
       "makeup": ["Румяна", "Помада нюд"],
       "style_tip": "Нежный и естественный образ для первого свидания."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "asian",
-    "age_category": "young",
-    "color_type": "winter",
-    "face_shape": "oval",
-    "body_type": "rectangle",
-    "occasion": "Офис",
-    "рекомендации": {
-      "одежда": ["Брюки", "Рубашка", "Пиджак", "Лоферы"],
-      "цвета": ["Светло-серый", "Белый", "Бирюзовый"],
-      "аксессуары": ["Кожаный ремень", "Часы"],
-      "makeup": [],
-      "style_tip": "Свежий и молодой офисный стиль – цветовая игра."
     }
   },
   {
@@ -209,158 +114,6 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "middle",
-    "color_type": "winter",
-    "face_shape": "square",
-    "body_type": "rectangle",
-    "occasion": "Спорт",
-    "рекомендации": {
-      "одежда": ["Спортивный костюм", "Кроссовки", "Футболка"],
-      "цвета": ["Черный", "Красный", "Белый"],
-      "аксессуары": ["Спортивные часы", "Сумка-бананка"],
-      "makeup": [],
-      "style_tip": "Яркий и энергичный образ для активных тренировок."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "fair",
-    "hair_color": "gray",
-    "eye_color": "green",
-    "race": "caucasian",
-    "age_category": "old",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "apple",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Костюм с юбкой", "Блуза", "Мокасины"],
-      "цвета": ["Серый", "Белый", "Розовый"],
-      "аксессуары": ["Сумочка", "Очки", "Шарф"],
-      "makeup": ["Легкий тональный крем", "Помада натуральная"],
-      "style_tip": "Элегантная прогулка – уют и стиль для зрелой женщины."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "gray",
-    "eye_color": "hazel",
-    "race": "hispanic",
-    "age_category": "old",
-    "color_type": "autumn",
-    "face_shape": "round",
-    "body_type": "hourglass",
-    "occasion": "Деловая встреча",
-    "рекомендации": {
-      "одежда": ["Костюм-тройка", "Рубашка", "Галстук", "Ботинки"],
-      "цвета": ["Темно-бордовый", "Белый", "Золото"],
-      "аксессуары": ["Портфель", "Часы", "Запонки"],
-      "makeup": [],
-      "style_tip": "Впечатляющий деловой образ с контрастными акцентами."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "dark",
-    "hair_color": "brown",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "middle",
-    "color_type": "autumn",
-    "face_shape": "square",
-    "body_type": "pear",
-    "occasion": "Офис",
-    "рекомендации": {
-      "одежда": ["Платье-футляр", "Жакет", "Туфли"],
-      "цвета": ["Синий", "Белый", "Золотистый"],
-      "аксессуары": ["Сумка", "Серьги-кольца", "Браслет"],
-      "makeup": ["Помада ягодная", "Тени"],
-      "style_tip": "Строгий, но женственный офисный стиль."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "fair",
-    "hair_color": "red",
-    "eye_color": "hazel",
-    "race": "caucasian",
-    "age_category": "young",
-    "color_type": "spring",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Вечеринка",
-    "рекомендации": {
-      "одежда": ["Платье-комбинация", "Косуха", "Ботинки на каблуке"],
-      "цвета": ["Черный", "Красный", "Серебро"],
-      "аксессуары": ["Колье-чокер", "Клатч"],
-      "makeup": ["Яркие стрелки", "Помада красная"],
-      "style_tip": "Смелый вечерний образ с рок-вайбом."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "green",
-    "race": "caucasian",
-    "age_category": "young",
-    "color_type": "spring",
-    "face_shape": "oval",
-    "body_type": "rectangle",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Джинсы-бойфренды", "Футболка", "Кеды", "Бомбер"],
-      "цвета": ["Оливковый", "Белый", "Серый"],
-      "аксессуары": ["Рюкзак", "Часы", "Солнечные очки"],
-      "makeup": [],
-      "style_tip": "Молодежный кэжуал для встреч с друзьями."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "medium",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "asian",
-    "age_category": "middle",
-    "color_type": "winter",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Свадьба",
-    "рекомендации": {
-      "одежда": ["Свадебное платье", "Фата", "Туфли", "Болеро"],
-      "цвета": ["Белый", "Серебро", "Жемчужный"],
-      "аксессуары": ["Диадема", "Жемчужное ожерелье"],
-      "makeup": ["Стойкий макияж", "Помада светлая"],
-      "style_tip": "Нежный и трогательный образ невесты."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "brown",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "middle",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Свадьба",
-    "рекомендации": {
-      "одежда": ["Смокинг", "Бабочка", "Ботинки", "Запонки"],
-      "цвета": ["Черный", "Белый", "Серебро"],
-      "аксессуары": ["Бутоньерка", "Часы", "Кольцо"],
-      "makeup": [],
-      "style_tip": "Элегантный и торжественный образ жениха."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "fair",
     "hair_color": "blond",
@@ -377,25 +130,6 @@
       "аксессуары": ["Сумка-шопер", "Золотые серьги"],
       "makeup": ["Нюдовый макияж", "Блеск для губ"],
       "style_tip": "Свежий и легкий офисный образ для молодого специалиста."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "young",
-    "color_type": "winter",
-    "face_shape": "round",
-    "body_type": "rectangle",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Белые шорты", "Футболка", "Кеды"],
-      "цвета": ["Белый", "Красный", "Черный"],
-      "аксессуары": ["Кепка", "Часы"],
-      "makeup": [],
-      "style_tip": "Спортивно-уличный стиль для прогулок по городу."
     }
   },
   {
@@ -418,25 +152,6 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "blond",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "old",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Льняные брюки", "Рубашка", "Мокасины"],
-      "цвета": ["Бежевый", "Голубой", "Белый"],
-      "аксессуары": ["Соломенная шляпа", "Кожаный ремень"],
-      "makeup": [],
-      "style_tip": "Классический летний стиль для зрелого мужчины."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "dark",
     "hair_color": "black",
@@ -456,212 +171,22 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "brown",
-    "race": "asian",
-    "age_category": "young",
-    "color_type": "autumn",
-    "face_shape": "square",
-    "body_type": "rectangle",
-    "occasion": "Деловая встреча",
-    "рекомендации": {
-      "одежда": ["Костюм", "Рубашка", "Галстук-бабочка"],
-      "цвета": ["Серый", "Белый", "Бордовый"],
-      "аксессуары": ["Портфель", "Запонки", "Часы"],
-      "makeup": [],
-      "style_tip": "Дерзкий и уверенный образ для презентаций."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "fair",
     "hair_color": "red",
-    "eye_color": "green",
-    "race": "caucasian",
-    "age_category": "middle",
-    "color_type": "spring",
-    "face_shape": "diamond",
-    "body_type": "pear",
-    "occasion": "Офис",
-    "рекомендации": {
-      "одежда": ["Брюки-клеш", "Блуза", "Туфли"],
-      "цвета": ["Изумрудный", "Золотой", "Бежевый"],
-      "аксессуары": ["Браслет", "Сумка"],
-      "makeup": ["Помада коралловая", "Тени зеленые"],
-      "style_tip": "Необычный офисный стиль с акцентом на цвет глаз."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "middle",
-    "color_type": "winter",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Свидание",
-    "рекомендации": {
-      "одежда": ["Белая рубашка", "Джинсы", "Кожаный пиджак"],
-      "цвета": ["Белый", "Черный", "Красный"],
-      "аксессуары": ["Цепь", "Часы"],
-      "makeup": [],
-      "style_tip": "Стиль рок-звезды для незабываемого свидания."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "medium",
-    "hair_color": "brown",
     "eye_color": "hazel",
-    "race": "hispanic",
-    "age_category": "young",
-    "color_type": "summer",
-    "face_shape": "round",
-    "body_type": "apple",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Сарафан", "Кеды", "Джинсовая куртка"],
-      "цвета": ["Бирюзовый", "Белый", "Коралловый"],
-      "аксессуары": ["Солнечные очки", "Панама"],
-      "makeup": ["Бальзам", "Тушь"],
-      "style_tip": "Яркий летний образ для прогулок по набережной."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "gray",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "old",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "rectangle",
-    "occasion": "Спорт",
-    "рекомендации": {
-      "одежда": ["Тренировочный костюм", "Кроссовки"],
-      "цвета": ["Серый", "Синий", "Белый"],
-      "аксессуары": ["Спортивные часы"],
-      "makeup": [],
-      "style_tip": "Спокойный и комфортный образ для утренних пробежек."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "middle",
-    "color_type": "winter",
-    "face_shape": "square",
-    "body_type": "hourglass",
-    "occasion": "Свадьба",
-    "рекомендации": {
-      "одежда": ["Вечернее платье", "Шаль", "Туфли"],
-      "цвета": ["Фиолетовый", "Серебро", "Жемчуг"],
-      "аксессуары": ["Длинные серьги", "Браслет"],
-      "makeup": ["Яркая помада", "Хайлайтер"],
-      "style_tip": "Королевский образ для свадебного торжества."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "green",
-    "race": "caucasian",
-    "age_category": "middle",
-    "color_type": "autumn",
-    "face_shape": "round",
-    "body_type": "rectangle",
-    "occasion": "Отдых",
-    "рекомендации": {
-      "одежда": ["Шорты", "Футболка", "Сандалии"],
-      "цвета": ["Хаки", "Белый", "Зеленый"],
-      "аксессуары": ["Панама", "Пляжная сумка"],
-      "makeup": [],
-      "style_tip": "Спокойный пляжный стиль для отдыха на море."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "fair",
-    "hair_color": "blond",
-    "eye_color": "green",
     "race": "caucasian",
     "age_category": "young",
     "color_type": "spring",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Спорт",
-    "рекомендации": {
-      "одежда": ["Топ", "Леггинсы", "Кроссовки"],
-      "цвета": ["Мятный", "Белый", "Розовый"],
-      "аксессуары": ["Фитнес-браслет", "Бутылка"],
-      "makeup": ["Водостойкая тушь", "Бальзам"],
-      "style_tip": "Свежий образ для фитнеса с весенним настроением."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "young",
-    "color_type": "winter",
     "face_shape": "oval",
     "body_type": "hourglass",
     "occasion": "Вечеринка",
     "рекомендации": {
-      "одежда": ["Кожаные брюки", "Футболка", "Кеды"],
-      "цвета": ["Черный", "Белый", "Золото"],
-      "аксессуары": ["Цепь", "Кольца"],
-      "makeup": [],
-      "style_tip": "Смелый и дерзкий образ для модной вечеринки."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "brown",
-    "race": "asian",
-    "age_category": "old",
-    "color_type": "autumn",
-    "face_shape": "square",
-    "body_type": "pear",
-    "occasion": "Прогулка",
-    "рекомендации": {
-      "одежда": ["Брюки палаццо", "Блуза", "Балетки"],
-      "цвета": ["Терракотовый", "Бежевый", "Белый"],
-      "аксессуары": ["Шарф", "Сумка"],
-      "makeup": ["Помада натуральная", "Румяна"],
-      "style_tip": "Комфортный и элегантный образ для прогулок."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "blond",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "young",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "rectangle",
-    "occasion": "Офис",
-    "рекомендации": {
-      "одежда": ["Брюки", "Рубашка", "Пиджак"],
-      "цвета": ["Серый", "Голубой", "Белый"],
-      "аксессуары": ["Часы", "Ремень"],
-      "makeup": [],
-      "style_tip": "Скандинавский минимализм в офисном стиле."
+      "одежда": ["Платье-комбинация", "Косуха", "Ботинки на каблуке"],
+      "цвета": ["Черный", "Красный", "Серебро"],
+      "аксессуары": ["Колье-чокер", "Клатч"],
+      "makeup": ["Яркие стрелки", "Помада красная"],
+      "style_tip": "Смелый вечерний образ с рок-вайбом."
     }
   },
   {
@@ -684,60 +209,22 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "brown",
-    "eye_color": "hazel",
-    "race": "hispanic",
-    "age_category": "middle",
-    "color_type": "autumn",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Вечеринка",
-    "рекомендации": {
-      "одежда": ["Бархатный пиджак", "Рубашка", "Лоферы"],
-      "цвета": ["Бордовый", "Золотой", "Черный"],
-      "аксессуары": ["Карманная брошь", "Часы"],
-      "makeup": [],
-      "style_tip": "Элегантный вечерний образ с бархатным акцентом."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "fair",
-    "hair_color": "red",
-    "eye_color": "hazel",
+    "hair_color": "blond",
+    "eye_color": "blue",
     "race": "caucasian",
-    "age_category": "middle",
-    "color_type": "spring",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Деловая встреча",
+    "age_category": "young",
+    "color_type": "summer",
+    "face_shape": "diamond",
+    "body_type": "apple",
+    "occasion": "Вечеринка",
     "рекомендации": {
-      "одежда": ["Костюм", "Блуза", "Туфли"],
-      "цвета": ["Темно-зеленый", "Бежевый", "Золото"],
-      "аксессуары": ["Дипломат", "Серьги"],
-      "makeup": ["Smoky eyes", "Помада нейтральная"],
-      "style_tip": "Уверенный и стильный образ для деловых переговоров."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "old",
-    "color_type": "winter",
-    "face_shape": "square",
-    "body_type": "rectangle",
-    "occasion": "Отдых",
-    "рекомендации": {
-      "одежда": ["Льняной костюм", "Футболка", "Сандалии"],
-      "цвета": ["Белый", "Бежевый", "Оливковый"],
-      "аксессуары": ["Солнечные очки", "Кожаный ремень"],
-      "makeup": [],
-      "style_tip": "Средиземноморский стиль для комфортного отдыха."
+      "одежда": ["Платье с блестками", "Туфли", "Кардиган"],
+      "цвета": ["Серебро", "Розовый", "Белый"],
+      "аксессуары": ["Длинные серьги", "Клатч"],
+      "makeup": ["Smoky eyes", "Помада неоновая"],
+      "style_tip": "Гламурный и яркий образ для ночного клуба."
     }
   },
   {
@@ -760,79 +247,22 @@
     }
   },
   {
-    "gender": "male",
-    "skin_tone": "fair",
-    "hair_color": "brown",
-    "eye_color": "blue",
-    "race": "caucasian",
-    "age_category": "middle",
-    "color_type": "summer",
-    "face_shape": "oval",
-    "body_type": "hourglass",
-    "occasion": "Свидание",
-    "рекомендации": {
-      "одежда": ["Рубашка", "Джинсы", "Кеды"],
-      "цвета": ["Белый", "Синий", "Коричневый"],
-      "аксессуары": ["Браслет", "Часы"],
-      "makeup": [],
-      "style_tip": "Классический и романтичный образ для свидания."
-    }
-  },
-  {
-    "gender": "female",
-    "skin_tone": "dark",
-    "hair_color": "black",
-    "eye_color": "brown",
-    "race": "african",
-    "age_category": "old",
-    "color_type": "winter",
-    "face_shape": "square",
-    "body_type": "pear",
-    "occasion": "Свадьба",
-    "рекомендации": {
-      "одежда": ["Платье-футляр", "Жакет", "Туфли"],
-      "цвета": ["Фиолетовый", "Серебро", "Белый"],
-      "аксессуары": ["Жемчужное ожерелье", "Клатч"],
-      "makeup": ["Помада ягодная", "Тени"],
-      "style_tip": "Элегантный и сдержанный образ для свадебной церемонии."
-    }
-  },
-  {
-    "gender": "male",
-    "skin_tone": "medium",
-    "hair_color": "gray",
-    "eye_color": "green",
-    "race": "caucasian",
-    "age_category": "old",
-    "color_type": "autumn",
-    "face_shape": "round",
-    "body_type": "rectangle",
-    "occasion": "Деловая встреча",
-    "рекомендации": {
-      "одежда": ["Костюм", "Рубашка", "Галстук"],
-      "цвета": ["Темно-зеленый", "Бежевый", "Коричневый"],
-      "аксессуары": ["Кожаный портфель", "Часы"],
-      "makeup": [],
-      "style_tip": "Классический и надежный образ для зрелого бизнесмена."
-    }
-  },
-  {
     "gender": "female",
     "skin_tone": "fair",
     "hair_color": "blond",
     "eye_color": "blue",
     "race": "caucasian",
     "age_category": "young",
-    "color_type": "summer",
-    "face_shape": "diamond",
-    "body_type": "apple",
-    "occasion": "Вечеринка",
+    "color_type": "spring",
+    "face_shape": "oval",
+    "body_type": "hourglass",
+    "occasion": "Офис",
     "рекомендации": {
-      "одежда": ["Платье с блестками", "Туфли", "Кардиган"],
-      "цвета": ["Серебро", "Розовый", "Белый"],
-      "аксессуары": ["Длинные серьги", "Клатч"],
-      "makeup": ["Smoky eyes", "Помада неоновая"],
-      "style_tip": "Гламурный и яркий образ для ночного клуба."
+      "одежда": ["Пиджак прямого кроя", "Брюки чинос", "Водолазка"],
+      "цвета": ["Светло-голубой", "Бежевый", "Белый"],
+      "аксессуары": ["Сумка-шопер", "Золотые серьги"],
+      "makeup": ["Нюдовый макияж", "Блеск для губ"],
+      "style_tip": "Свежий и легкий офисный образ для молодого специалиста."
     }
   }
 ]
