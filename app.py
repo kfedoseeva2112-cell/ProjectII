@@ -1,7 +1,3 @@
-import streamlit as st
-from PIL import Image
-from api_analyzer import analyze_face
-from matcher import get_recommendations
 st.markdown("#### 💄 Макияж")
 makeup_list = rec.get("makeup")
 if makeup_list and len(makeup_list) > 0:
