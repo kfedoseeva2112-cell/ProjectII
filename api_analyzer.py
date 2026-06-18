@@ -1,60 +1,57 @@
 import requests
-import base64
-import json
 
-# --- ВАШИ КЛЮЧИ (замените, если нужно) ---
+# --- ВАШИ КЛЮЧИ ---
 API_KEY = "TJnymPukGSYQIAi_lS3VOtpplaezJEto"
 API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в Face++ и возвращает параметры.
-    Использует двухэтапный подход для обхода ограничений.
+    Отправляет фото в Face++ через multipart/form-data.
+    Двухэтапный процесс: сначала детекция, затем получение атрибутов.
     """
-    # 1. Детекция лица (без атрибутов)
+    # ШАГ 1: Детекция лица (без атрибутов)
     url_detect = "https://api-us.faceplusplus.com/facepp/v3/detect"
-    encoded = base64.b64encode(image_bytes).decode('utf-8')
-    
-    payload = {
+    files = {
+        "image_file": ("photo.jpg", image_bytes, "image/jpeg")
+    }
+    data_detect = {
         "api_key": API_KEY,
         "api_secret": API_SECRET,
-        "image_base64": encoded,
-        "return_landmark": 0,  # не нужны
-        "return_attributes": "none"  # не запрашиваем здесь, чтобы избежать ошибки
+        "return_attributes": "none"  # на этом этапе не запрашиваем
     }
     
     try:
-        resp = requests.post(url_detect, data=payload, timeout=10)
+        resp = requests.post(url_detect, files=files, data=data_detect, timeout=10)
         if resp.status_code != 200:
             return {"error": f"Детекция не удалась: {resp.status_code} - {resp.text}"}
         
-        data = resp.json()
-        if "error_message" in data:
-            return {"error": data["error_message"]}
+        result = resp.json()
+        if "error_message" in result:
+            return {"error": result["error_message"]}
         
-        faces = data.get("faces")
+        faces = result.get("faces")
         if not faces:
             return {"error": "Лицо не найдено на фото"}
         
         face_token = faces[0]["face_token"]
         
-        # 2. Запрос атрибутов по токену
+        # ШАГ 2: Получение атрибутов по токену
         url_analyze = "https://api-us.faceplusplus.com/facepp/v3/face/analyze"
-        payload_analyze = {
+        data_analyze = {
             "api_key": API_KEY,
             "api_secret": API_SECRET,
             "face_tokens": face_token,
             "return_attributes": "gender,age,race"
         }
-        resp2 = requests.post(url_analyze, data=payload_analyze, timeout=10)
+        resp2 = requests.post(url_analyze, data=data_analyze, timeout=10)
         if resp2.status_code != 200:
             return {"error": f"Анализ не удался: {resp2.status_code} - {resp2.text}"}
         
-        data2 = resp2.json()
-        if "error_message" in data2:
-            return {"error": data2["error_message"]}
+        result2 = resp2.json()
+        if "error_message" in result2:
+            return {"error": result2["error_message"]}
         
-        faces2 = data2.get("faces")
+        faces2 = result2.get("faces")
         if not faces2:
             return {"error": "Атрибуты не получены"}
         
@@ -82,8 +79,7 @@ def analyze_face(image_bytes):
         }
         race = race_map.get(race_raw, "caucasian")
         
-        # Для остальных параметров (тон кожи, цвет волос, глаз) оставляем заглушки,
-        # так как Face++ их не выдаёт (можно будет определить отдельно)
+        # Остальные параметры (Face++ не определяет их, оставляем заглушки)
         skin_tone = "medium"
         hair_color = "brown"
         eye_color = "brown"
@@ -98,4 +94,4 @@ def analyze_face(image_bytes):
             "face_detected": True
         }
     except Exception as e:
-        return {"error": f"Ошибка соединения: {e}"}
+        return {"error": f"Ошибка соединения: {str(e)}"}
