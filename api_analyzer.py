@@ -6,18 +6,20 @@ API_SECRET = "WGF2ZgyFB0pWWjZY0C6taq20ROK4fRRH"
 
 def analyze_face(image_bytes):
     """
-    Отправляет фото в Face++ через multipart/form-data.
-    Двухэтапный процесс: сначала детекция, затем получение атрибутов.
+    Двухэтапный вызов Face++:
+    1. Детекция лица (без атрибутов) – multipart/form-data.
+    2. Запрос атрибутов (gender, age, race) через face/analyze,
+       где return_attributes передаётся в query-строке (params).
     """
-    # ШАГ 1: Детекция лица (без атрибутов)
+    # ШАГ 1: Детекция лица
     url_detect = "https://api-us.faceplusplus.com/facepp/v3/detect"
     files = {
         "image_file": ("photo.jpg", image_bytes, "image/jpeg")
     }
     data_detect = {
         "api_key": API_KEY,
-        "api_secret": API_SECRET,
-        "return_attributes": "none"  # на этом этапе не запрашиваем
+        "api_secret": API_SECRET
+        # return_attributes не передаём, чтобы избежать ошибки
     }
     
     try:
@@ -35,15 +37,15 @@ def analyze_face(image_bytes):
         
         face_token = faces[0]["face_token"]
         
-        # ШАГ 2: Получение атрибутов по токену
+        # ШАГ 2: Получение атрибутов (передаём return_attributes в URL)
         url_analyze = "https://api-us.faceplusplus.com/facepp/v3/face/analyze"
-        data_analyze = {
+        params_analyze = {
             "api_key": API_KEY,
             "api_secret": API_SECRET,
             "face_tokens": face_token,
             "return_attributes": "gender,age,race"
         }
-        resp2 = requests.post(url_analyze, data=data_analyze, timeout=10)
+        resp2 = requests.post(url_analyze, params=params_analyze, timeout=10)
         if resp2.status_code != 200:
             return {"error": f"Анализ не удался: {resp2.status_code} - {resp2.text}"}
         
@@ -79,7 +81,7 @@ def analyze_face(image_bytes):
         }
         race = race_map.get(race_raw, "caucasian")
         
-        # Остальные параметры (Face++ не определяет их, оставляем заглушки)
+        # Параметры, которые Face++ не определяет, оставляем заглушками
         skin_tone = "medium"
         hair_color = "brown"
         eye_color = "brown"
